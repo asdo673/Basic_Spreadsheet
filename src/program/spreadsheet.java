@@ -73,5 +73,22 @@ public class spreadsheet {
     }
 
     // operacion
-     
+    public void setCell () {
+        // Cada que haces set en alguna celda, verifica si esta enlazada conotra celda, es decir,
+        // verifica si hay otra celda que referencie a esta ya sea para operaciones o simple re__
+        // ferencia. Actualizar el valor en cada una de estas celdas referenciantes adecuadamente.
+        // Si la celda en la que se realiza set era una operacion o referencia, entonces se tienen
+        // los casos:
+        // Tiene las posiciones de las celdas, asi que las usa para obtener sus valores
+
+        // Asigna nuevo contenido a la celda especificada. Se eliminan los enlaces con las celdas que referencia
+        // (si tuviera) y se establece el nuevo contenido. Si fuese operacion o referencia, entonces
+        // se establecen nuevos enlaces referenciando a las celdas especificadas. Finalmente, revisa si existen
+        // celdas que referencien a esta. Si es que si, entonces se actualizan sus contenidos acorde.
+        // Aclaracion: si una celda referncia a otra, entonces
+    }
+
+    public void getCell () {
+
+    }
 }
