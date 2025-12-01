@@ -1,6 +1,7 @@
 package program;
 
-import graph.HashGraph;
+import graph.SpreadsheetGraph;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class spreadsheet {
     private static final int rowsNumber = 20;   // Numero de filas
     private static final int columnsNumber = COLUMN.values().length;    // Numero de columnas
-    private final HashGraph<String, Cell> hashGraph;     // Grafo que conforma la estructura del spreadsheet
+    private final SpreadsheetGraph MainGraph;     // Grafo que conforma la estructura del spreadsheet
 
     public static void main (String[] args) {
         spreadsheet sh= new spreadsheet();
@@ -27,21 +28,16 @@ public class spreadsheet {
         //
     }
 
-
-
     public spreadsheet (){  // constructor principal
         List<String> keys = new ArrayList<>(rowsNumber * columnsNumber);
-        List<Cell> cells = new ArrayList<>(rowsNumber * columnsNumber);
-
         // Inicializacion de keys y cells. Va de fila en fila.
         for(int i = 0; i < rowsNumber; i++){
             for(COLUMN c : COLUMN.values()){
                 keys.add(c.toString() + (i + 1));
-                cells.add(new Cell(c, i + 1));
             }
         }
 
-        hashGraph = new HashGraph<>(keys, cells);
+        MainGraph = new SpreadsheetGraph(keys);
     }
 
     // operacion
@@ -50,21 +46,30 @@ public class spreadsheet {
     }
     public void setCell (String location, String content) {
         // Asigna nuevo contenido a la celda especificada. Se eliminan los enlaces con las celdas que esta referencia
-        // (si tuviera) y se establece el nuevo contenido. Si el contenido viene de operacion o referencia, entonces
+        // (si tuviera) y se establece el nuevo contenido. Si el content es operacion o referencia, entonces
         // se establecen nuevos enlaces referenciando a las celdas requeridas. Finalmente, revisa si existen
         // celdas que referencien a la celda especificada. Si es que si, entonces se actualizan sus contenidos acorde
         // al cambio en esta.
         // Aclaracion: que una celda A referencie a otra B significa que B posee una arista dirigida hacia A. Esto
         // es asi porque en caso se modifique el contenido de B, inmediatamente se puede acceder a A (que usa su contenido)
         // para actualizarlo.
+        MainGraph.deleteOfLinksOf(location);
+
         if(content.startsWith("+")){
-            String reference = content.substring(1);
+            String referencedCell = content.substring(1);
+            MainGraph.setCellLink(referencedCell, location);    // enlaza celda referenciada con la actual
+            content = MainGraph.getCellContent(referencedCell);
+
+        } else if (){
+
         }
-        // obtiene celda para modificar su contenido
-        // esto probablemente deberia encapsularse
-        Cell cell = hashGraph.getVertexValue(location);
-        cell.content = content;
-        hashGraph.replaceVertexValue(location, cell);
+
+        MainGraph.setCellContent(location, content);
+
+        // Actualiza los contenidos de las celdas que referencian a esta
+        for (String cell : MainGraph.getAllCellLinks(location)){
+            setCell();
+        }
     }
 
     public void getCell () {
