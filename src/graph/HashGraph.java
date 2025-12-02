@@ -7,14 +7,14 @@ import java.util.Map;
 
 public class HashGraph<E, T extends Comparable<T> > {
 
-    private Map<E, Vertex<E, T>> Vertices = new HashMap<>();   // lista de vertices
+    private Map<E, Vertex<E, T>> Vertices = new HashMap<>();   // lista de llaves con vertices
 
     public HashGraph(List<E> keys){
         int i = 0;
         for(E key : keys){
             Vertices.put(
                     key,
-                    new Vertex<>(i++, key)
+                    new Vertex<>(key)
             );
         }
     }
@@ -25,7 +25,7 @@ public class HashGraph<E, T extends Comparable<T> > {
         for(E key : keys){
             Vertices.put(
                     key,
-                    new Vertex<>(i, key, values.get(i++))
+                    new Vertex<>(key, values.get(i++))
             );
         }
     }
