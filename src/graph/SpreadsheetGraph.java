@@ -3,15 +3,15 @@ package graph;
 import java.util.ArrayList;
 import java.util.List;
 
+// Clase especifica para definir la estructura del spreadsheet. Es subclase de HashGraph
 public class SpreadsheetGraph extends HashGraph<String, String>{
 
     public SpreadsheetGraph(List<String> keys) {
+        // Se inicializa grafo con los elementos de keys como llaves y un vertice para
+        // cada uno. Value de cada vertice es String vacio.
         super(keys);
         for(int i = 0; i < keys.size(); i++)
             getAllVertices().get(i).setValue("");
-    }
-    public SpreadsheetGraph(List<String> keys, List<String> values) {
-        super(keys, values);
     }
 
     public String getCellContent (String key){
@@ -27,6 +27,12 @@ public class SpreadsheetGraph extends HashGraph<String, String>{
                 getVertex(DestinyKey));
     }
 
+    public String getCellLink(String key){
+        // Retorna la ubicacion de la unica celda enlazada. Si existen mas, entonces
+        // retorna la de la primera celda en haberse enlazado.
+        return getVertex(key).getFirstAdjacent().getKey();
+    }
+
     public List<String> getAllCellLinks (String key) {
         List<String> adjacents = new ArrayList<>();
 
@@ -35,7 +41,7 @@ public class SpreadsheetGraph extends HashGraph<String, String>{
         return adjacents;
     }
 
-    public void deleteOfLinksOf(String key){
+    public void deleteLinksOf(String key){
         getVertex(key).clear();
         getVertex(key).setValue("");
     }

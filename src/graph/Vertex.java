@@ -3,43 +3,47 @@ package graph;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vertex <E, T extends Comparable<T>>{
-    private static final int ADJACENTS_NUMBER = 8;
+public class Vertex <K, T extends Comparable<T>>{
 
-    private E key;      // clave del vertice
+    private K key;      // clave del vertice
     private T value;     // valor del vertice
-    private List<Vertex<E, T>> adjacents;  // lista de vertices adyacentes
+    private List<Vertex<K, T>> adjacents;  // lista de vertices adyacentes
 
-    protected Vertex (E key){
+    protected Vertex (K key){
         this(key, null);
     }
-    protected Vertex(E key, T value) {
+    protected Vertex(K key, T value) {
         this.value = value;
         this.key = key;
-        adjacents = new ArrayList<>(ADJACENTS_NUMBER);
+        adjacents = new ArrayList<>();
     }
 
     public T getValue() {
         return value;
     }
 
-    public E getKey(){
+    public K getKey(){
         return key;
     }
 
-    public List<Vertex<E, T>> getAdjacents() {
+    public List<Vertex<K, T>> getAdjacents() {
         return adjacents;
+    }
+
+    public Vertex<K, T> getFirstAdjacent() {
+        adjacents.getFirst();
+        return adjacents.getFirst();
     }
 
     public void setValue(T value) {
         this.value = value;
     }
 
-    public void setAdjacents(List<Vertex<E, T>> adjacents) {
+    public void setAdjacents(List<Vertex<K, T>> adjacents) {
         this.adjacents = adjacents;
     }
 
-    public void setAdjacent(Vertex<E, T> to){
+    public void setAdjacent(Vertex<K, T> to){
         adjacents.add(to);
     }
 
@@ -54,7 +58,7 @@ public class Vertex <E, T extends Comparable<T>>{
         builder.append(key)
                 .append("(").append(value).append(")")
                 .append("\nadjacents: ");
-        for(Vertex<E, T> v : adjacents)
+        for(Vertex<K, T> v : adjacents)
             builder.append(v.key)
                     .append("(").append(value).append(")")
                     .append(" ");

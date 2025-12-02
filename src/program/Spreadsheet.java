@@ -8,26 +8,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // Clase para definir el shepadsheet.
-// Tal vez se podria crear una clase para manejar el grafo especial para el spreadsheet
-// y esta clase que utilize a esa otra de modo que aqui solo se maneje las operaciones.
-// Spreadsheet creo que igual y deberia manejar mas que valores, es decir, eerencias a celdas y asi
-// Aunque celda creo que si o si deberia ser solo valore (Numero, Texto);
-// Tal vez se podria usar de key un nuevo objeto que involucre COLUMNA y NUMERO en lugar de una cadena.
-public class spreadsheet {
-    private static final List<String> COLUMNS;
+public class Spreadsheet {
+    private static final List<String> COLUMNS;  // Lista de columnas a usar como String
 
     private static final int rowsNumber = 20;   // Numero de filas
-    private static final int columnsNumber = COLUMN.values().length;    // Numero de columnas
+    private static final int columnsNumber = 8;    // Numero de columnas
     private final SpreadsheetGraph MainGraph;     // Grafo que conforma la estructura del spreadsheet
 
+    static {
+        // inicializacion de lista de columnas
+        COLUMNS = new ArrayList<>(COLUMN.values().length);
+        int counter = 0;
+        for(COLUMN c : COLUMN.values()){
+            if(counter > columnsNumber) break;
+            COLUMNS.add(c.toString());
+            counter++;
+        }
+    }
+
     public static void main (String[] args) {
-        spreadsheet sh= new spreadsheet();
+        Spreadsheet sh= new Spreadsheet();
         System.out.println("sh");
         sh.setCell("A1", "10");
         sh.setCell("B1", "20");
         sh.setCell("A2", "30");
         sh.setCell("D1", "+A1");
-        sh.setCell("C1", "@sum(A1..B2)");
+        sh.setCell("C1", "@sum(B2..A1)");
         sh.setCell("D1", "+C1");
         sh.setCell("H3", "@avg(A1..B2)");
 
@@ -40,17 +46,10 @@ public class spreadsheet {
         System.out.println(sh.getCell("H3"));
     }
 
-    static {
-        // inicializacion de lista de columnas
-        COLUMNS = new ArrayList<>(COLUMN.values().length);
-        for(COLUMN c : COLUMN.values()){
-            COLUMNS.add(c.toString());
-        }
-    }
-
-    public spreadsheet (){  // constructor principal
+    public Spreadsheet(){  // constructor principal
         List<String> keys = new ArrayList<>(rowsNumber * columnsNumber);
-        // Inicializacion de keys y cells. Va de fila en fila.
+        // Inicializacion de keys y celdas. Va de fila en fila.
+        // Cada key es la ubicacion de la celda, e.g., "A3".
         for(int i = 0; i < rowsNumber; i++){
             for(String c : COLUMNS){
                 keys.add(c + (i + 1));
@@ -59,27 +58,31 @@ public class spreadsheet {
         MainGraph = new SpreadsheetGraph(keys);
     }
 
-    // operacion
+    public void setCell (String location, double content){
+        setCell(location, String.valueOf(content));
+    }
     public void setCell (String location, int content){
         setCell(location, String.valueOf(content));
     }
     public void setCell (String location, String content) {
-        // Asigna nuevo contenido a la celda especificada.
-        MainGraph.deleteOfLinksOf(location);
+        // Asigna nuevo contenido a la celda especificada. Se admite guardar los comandos de las operaciones
+        // en las celdas.
+        MainGraph.deleteLinksOf(location);
 
         if(content.startsWith("+")){
-            String referenced = content.substring(1);
+            String referenced = content.substring(1);   // obtiene celda refernciada
             MainGraph.setCellLink(location, referenced);    // celda actual apuntara a referenciada
         }
         else if (content.startsWith("@")){
             String regex = "[A-H]|1[0-9]|20|[0-9]";
-            List<String> matches = getMatches(regex, content);
-
+            List<String> matches = getMatches(regex, content);      // se obtiene lista con las 2 columnas y
+                                                                    // las 2 filas que delimitan el bloque seleccionado
             String lesserColumn;
             String lesserRow;
             String greaterColumn;
             String greaterRow;
 
+            // se determina columna menor y mayor, y fila menor y mayor.
             if(matches.get(0).compareTo(matches.get(2)) < 0){
                 lesserColumn = matches.get(0);
                 greaterColumn = matches.get(2);
@@ -101,6 +104,7 @@ public class spreadsheet {
             int maxRow = Integer.parseInt(greaterRow);
             for(int i = minCol; i <= maxCol; i++)
                 for(int j = minRow; j <= maxRow; j++)
+                    // Se enlaza la celda actual con cada vertice del bloque seleccionado
                     MainGraph.setCellLink(location, COLUMNS.get(i) + j);
         }
 
@@ -108,6 +112,7 @@ public class spreadsheet {
     }
 
     private List<String> getMatches(String regex, String content){
+        // retorna lista con las subcadenas que encagen con el patron determinado en regex.
         Matcher matcher = Pattern.compile(regex).matcher(content);
         List<String> matchesList = new ArrayList<>();
         while(matcher.find())
@@ -122,23 +127,24 @@ public class spreadsheet {
         String content = MainGraph.getCellContent(location);
 
         if(content.startsWith("+")){
-            String referenced = content.substring(1);
+            String referenced = MainGraph.getCellLink(location);    // se obtiene celda a la que refiere
             content = getCell(referenced);
         }
         else if (content.startsWith("@")) {
             String operation = content.substring(1, 4);
+            List<String> adjacents = MainGraph.getAllCellLinks(location);   // se obtienen todas las celdas a las que refiere
             switch (operation){
                 case "max" :
-                    content = maxOperation(location);
+                    content = maxOperation(location, adjacents);
                     break;
                 case "min" :
-                    content = minOperation(location);
+                    content = minOperation(location, adjacents);
                     break;
                 case "avg" :
-                    content = avgOperation(location);
+                    content = avgOperation(location, adjacents);
                     break;
                 case "sum" :
-                    content = sumOperation(location);
+                    content = sumOperation(location, adjacents);
                     break;
             }
         }
@@ -146,8 +152,7 @@ public class spreadsheet {
         return content;
     }
 
-    private String maxOperation (String location) { // SI NO NUMEROS, 0
-        List<String> adjacents = MainGraph.getAllCellLinks(location);
+    private String maxOperation (String location, List<String> adjacents) { // SI NO NUMEROS, 0
         List<Double> values = getAdjacentValues(adjacents);
         String result = "0";
         double max;
@@ -160,8 +165,7 @@ public class spreadsheet {
         }
         return result;
     }
-    private String minOperation (String location) { // SI NO NUMEROS, 0
-        List<String> adjacents = MainGraph.getAllCellLinks(location);
+    private String minOperation (String location, List<String> adjacents) { // SI NO NUMEROS, 0
         List<Double> values = getAdjacentValues(adjacents);
         String result = "0";
         double min;
@@ -174,8 +178,7 @@ public class spreadsheet {
         }
         return result;
     }
-    private String avgOperation (String location) { // SI NO NUMEROS, ERROR
-        List<String> adjacents = MainGraph.getAllCellLinks(location);
+    private String avgOperation (String location, List<String> adjacents) { // SI NO NUMEROS, ERROR
         List<Double> values = getAdjacentValues(adjacents);
         String result = "ERROR";
         if(!values.isEmpty()){
@@ -188,8 +191,7 @@ public class spreadsheet {
         }
         return result;
     }
-    private String sumOperation (String location) {
-        List<String> adjacents = MainGraph.getAllCellLinks(location);
+    private String sumOperation (String location, List<String> adjacents) {
         List<Double> values = getAdjacentValues(adjacents);
         String result = "0";
         double sum = 0;
@@ -203,6 +205,8 @@ public class spreadsheet {
     }
 
     private List<Double> getAdjacentValues(List<String> adjacents){
+        // Retorna lista con los contenidos de las celdas de adjacents que son numeros.
+        // Si no se reconoce ninguno como numero, entonces la lista estara vacia.
         List<Double> values = new ArrayList<>(adjacents.size());
         for(String cell : adjacents){
             double value = 0;
@@ -213,28 +217,4 @@ public class spreadsheet {
         }
         return values;
     }
-
-  /*  private class Cell implements Comparable<Cell> {   // Inner class para representar celdas del spreadsheet
-        private String content;
-        public COLUMN column;
-        public int row;
-
-        public Cell (COLUMN column, int row) {
-            this (column, row, "");
-        }
-        public Cell(COLUMN column, int row, String content){
-            this.column = column;
-            this.row = row;
-            this.content = content;
-        }
-        @Override
-        public int compareTo(Cell o) {
-            // TODO
-            return 0;
-        }
-        @Override
-        public String toString() {
-            return "[" + column + row + ": " + content + "]";
-        }
-    }*/
 }
