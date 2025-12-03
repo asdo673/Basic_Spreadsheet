@@ -6,8 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Basic_Spreadsheet" />
+        <module name="basic-spreadsheet" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Basic_Spreadsheet" target="24" />
+    </bytecodeTargetLevel>
   </component>
 </project>
