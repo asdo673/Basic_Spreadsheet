@@ -18,16 +18,3 @@ ideas:
 // y esta clase que utilize a esa otra de modo que aqui solo se maneje las operaciones.
 // Spreadsheet creo que igual y deberia manejar mas que valores, es decir, eerencias a celdas y asi
 // Aunque celda creo que si o si deberia ser solo valore (Numero, Texto);
-
-
-    // operacion
-    public void setCell () {
-        // Asigna nuevo contenido a la celda especificada. Se eliminan los enlaces con las celdas que esta referencia
-        // (si tuviera) y se establece el nuevo contenido. Si el contenido viene de operacion o referencia, entonces
-        // se establecen nuevos enlaces referenciando a las celdas requeridas. Finalmente, revisa si existen
-        // celdas que referencien a la celda especificada. Si es que si, entonces se actualizan sus contenidos acorde
-        // al cambio en esta.
-        // Aclaracion: que una celda A referencie a otra B significa que B posee una arista dirigida hacia A. Esto
-        // es asi porque en caso se modifique el contenido de B, inmediatamente se puede acceder a A (que usa su contenido)
-        // para actualizarlo.
-    }
