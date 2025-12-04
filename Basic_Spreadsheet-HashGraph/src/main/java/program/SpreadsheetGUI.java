@@ -4,6 +4,8 @@
  */
 package program;
 
+import program.Spreadsheet;
+
 /**
  *
  * @author dhemi
