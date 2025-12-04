@@ -32,13 +32,16 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        excel = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         commandField = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        viewCommand = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        excel.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -73,11 +76,16 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setRowSelectionAllowed(false);
-        jTable1.setShowHorizontalLines(true);
-        jTable1.setShowVerticalLines(true);
-        jTable1.setSurrendersFocusOnKeystroke(true);
-        jScrollPane1.setViewportView(jTable1);
+        excel.setRowSelectionAllowed(false);
+        excel.setShowHorizontalLines(true);
+        excel.setShowVerticalLines(true);
+        excel.setSurrendersFocusOnKeystroke(true);
+        excel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                excelMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(excel);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setText("Excel Basico");
@@ -88,28 +96,39 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel2.setText("CommandField");
+
+        jScrollPane2.setViewportView(viewCommand);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(54, 54, 54)
+                .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(commandField, javax.swing.GroupLayout.PREFERRED_SIZE, 786, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 786, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 786, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 585, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(commandField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(63, Short.MAX_VALUE))
+                    .addComponent(jLabel2))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(7, 7, 7)
                 .addComponent(jLabel1)
-                .addGap(41, 41, 41)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(commandField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(66, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         pack();
@@ -126,6 +145,20 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
         refreshTable();
         
     }//GEN-LAST:event_commandFieldActionPerformed
+
+    private void excelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_excelMouseClicked
+        int rowIndex = excel.rowAtPoint(evt.getPoint());
+        int columnIndex = excel.columnAtPoint(evt.getPoint());
+        
+        if(rowIndex < 0 || columnIndex < 0)
+            return;
+        
+        String location = toLocation(rowIndex,columnIndex);
+        String value = spreadsheet.getValue(location);
+        
+        viewCommand.setText(value != null ? value : "");
+        
+    }//GEN-LAST:event_excelMouseClicked
 
     /**
      * @param args the command line arguments
@@ -153,31 +186,34 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
     }
 
     private String toLocation(int row, int columnIndex) {
-        String column = jTable1.getColumnName(columnIndex);
+        String column = excel.getColumnName(columnIndex);
         int rowNumber = row + 1;
         return column + rowNumber;
     }
     
     private void refreshTable(){
-        for(int i=0 ; i < jTable1.getRowCount(); i++){
-            for(int j = 0; j< jTable1.getColumnCount(); j++){
+        for(int i=0 ; i < excel.getRowCount(); i++){
+            for(int j = 0; j< excel.getColumnCount(); j++){
                 String location = toLocation(i,j);
                 String value = spreadsheet.getCell(location);
-                jTable1.setValueAt(value,i,j);
+                excel.setValueAt(value,i,j);
             }
         }
     }
     
     private String[] ProccesText(String text){
-        String[] texts = text.trim().split(" ");
+        String[] texts = text.trim().split(" ",2);
         return texts;
     }
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField commandField;
+    private javax.swing.JTable excel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextPane viewCommand;
     // End of variables declaration//GEN-END:variables
 }
