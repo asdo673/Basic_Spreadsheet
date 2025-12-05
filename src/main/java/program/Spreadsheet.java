@@ -3,6 +3,7 @@ package program;
 import graph.SpreadsheetGraph;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +15,7 @@ public class Spreadsheet {
     private static final int rowsNumber = 20;   // Numero de filas
     private static final int columnsNumber = 8;    // Numero de columnas
     private final SpreadsheetGraph MainGraph;     // Grafo que conforma la estructura del spreadsheet
+    private final List<List<String>> Circuits;
 
     static {
         // inicializacion de lista de columnas
@@ -25,7 +27,14 @@ public class Spreadsheet {
             counter++;
         }
     }
-    
+    public static void main(String[] args){
+        Spreadsheet e = new Spreadsheet();
+        e.setCell("A1", "+A2");
+        e.setCell("A2", "+B2");
+        e.setCell("B2", "+B1");
+        e.setCell("B1", "+A1");
+        e.MainGraph.getPath("A1", "A1");
+    }
     public Spreadsheet(){  // constructor principal
         List<String> keys = new ArrayList<>(rowsNumber * columnsNumber);
         // Inicializacion de keys y celdas. Va de fila en fila.
@@ -36,6 +45,7 @@ public class Spreadsheet {
             }
         }
         MainGraph = new SpreadsheetGraph(keys);
+        Circuits = new LinkedList<>();
     }
     
     public void setCell (String location, double content){
@@ -47,7 +57,7 @@ public class Spreadsheet {
     public void setCell (String location, String content) {
         // Asigna nuevo contenido a la celda especificada. Se admite guardar los comandos de las operaciones
         // en las celdas.
-        MainGraph.deleteLinksOf(location);
+        MainGraph.clearCell(location);  // elimina las conecciones con las celdas que referenciaba y elimina su contenido
 
         if(content.startsWith("+")){
             String referenced = content.substring(1);   // obtiene celda refernciada
@@ -62,7 +72,7 @@ public class Spreadsheet {
             String greaterColumn;
             String greaterRow;
 
-            // se determina columna menor y mayor, y fila menor y mayor.
+            // se determina columna menor y mayor, asi como fila menor y mayor.
             if(matches.get(0).compareTo(matches.get(2)) < 0){
                 lesserColumn = matches.get(0);
                 greaterColumn = matches.get(2);
@@ -78,6 +88,7 @@ public class Spreadsheet {
                 greaterRow = matches.get(1);
             }
 
+            // se obtiene indices
             int minCol = COLUMNS.indexOf(lesserColumn);
             int maxCol = COLUMNS.indexOf(greaterColumn);
             int minRow = Integer.parseInt(lesserRow);
@@ -88,7 +99,28 @@ public class Spreadsheet {
                     MainGraph.setCellLink(location, COLUMNS.get(i) + j);
         }
 
+        if(!Circuits.isEmpty()){
+            for(List<String> l : Circuits){
+                testCircuit(l);
+            }
+        }
+
+        List<String> circuit = MainGraph.getPath(location, location);
+        if(circuit != null && !Circuits.contains(circuit)){     // si existe circuito y este no esta en la lista de circuitos, entonces se marcan y agregan
+            for(String cell : circuit){
+                MainGraph.setVertexCircuit(cell, true);
+            }
+            Circuits.add(circuit);
+        } else MainGraph.setVertexCircuit(location, true);
+
         MainGraph.setCellContent(location, content);
+    }
+
+    private void testCircuit(List<String> circuit){
+        for(int i = 0; i < circuit.size() - 1; i++){
+            if( !MainGraph.getAllCellLinks(circuit.get(i))
+                        .contains(circuit.get(i+1)) ) break;
+        }
     }
 
     private List<String> getMatches(String regex, String content){

@@ -8,6 +8,7 @@ public class Vertex <K, T extends Comparable<T>>{
     private K key;      // clave del vertice
     private T value;     // valor del vertice
     private List<Vertex<K, T>> adjacents;  // lista de vertices adyacentes
+    private boolean circuit;    // especifica si el vertice forma parte de un ciclo euleriano
 
     protected Vertex (K key){
         this(key, null);
@@ -30,6 +31,10 @@ public class Vertex <K, T extends Comparable<T>>{
         return adjacents;
     }
 
+    public boolean isCircuit(){
+        return circuit;
+    }
+
     public Vertex<K, T> getFirstAdjacent() {
         adjacents.getFirst();
         return adjacents.getFirst();
@@ -47,9 +52,14 @@ public class Vertex <K, T extends Comparable<T>>{
         adjacents.add(to);
     }
 
+    public void setCircuit(boolean iscircuit){
+        circuit = iscircuit;
+    }
+
     public void clear (){
         this.value = null;
         this.adjacents.clear();
+        this.circuit = false;
     }
 
     @Override

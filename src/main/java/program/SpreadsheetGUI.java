@@ -138,6 +138,7 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
         refreshTable();
     }
     private void commandFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandFieldActionPerformed
+        // Bloque donde se ingresan los comandos
         String text = commandField.getText();
         String[] texts = ProccesText(text);
         spreadsheet.setCell(texts[0],texts[1]);
@@ -156,7 +157,7 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
         String location = toLocation(rowIndex,columnIndex);
         String value = spreadsheet.getValue(location);
         
-        viewCommand.setText(value != null ? value : "");
+        viewCommand.setText(value);
         
     }//GEN-LAST:event_excelMouseClicked
 
