@@ -41,7 +41,7 @@ public class SpreadsheetGraph extends HashGraph<String, String>{
         return adjacents;
     }
 
-    public void deleteLinksOf(String key){
+    public void clearCell(String key){
         getVertex(key).clear();
         getVertex(key).setValue("");
     }

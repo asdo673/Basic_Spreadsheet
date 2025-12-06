@@ -1,5 +1,6 @@
 package program;
 
+import graph.paths.GraphPaths;
 import graph.SpreadsheetGraph;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Spreadsheet {
     private static final int rowsNumber = 20;   // Numero de filas
     private static final int columnsNumber = 8;    // Numero de columnas
     private final SpreadsheetGraph MainGraph;     // Grafo que conforma la estructura del spreadsheet
+    private final GraphPaths<String, String> Circuits;      // Grafo que guarda ciclos
 
     static {
         // inicializacion de lista de columnas
@@ -25,27 +27,22 @@ public class Spreadsheet {
             counter++;
         }
     }
-
-    public static void main (String[] args) {
-        Spreadsheet sh= new Spreadsheet();
-        System.out.println("sh");
-        sh.setCell("A1", "10");
-        sh.setCell("B1", "20");
-        sh.setCell("A2", "30");
-        sh.setCell("D1", "+A1");
-        sh.setCell("C1", "@sum(B2..A1)");
-        sh.setCell("D1", "+C1");
-        sh.setCell("H3", "@avg(A1..B2)");
-
-        System.out.println(sh.getCell("A1"));
-        System.out.println(sh.getCell("B1"));
-        System.out.println(sh.getCell("A2"));
-        System.out.println(sh.getCell("D1"));
-        System.out.println(sh.getCell("C1"));
-        System.out.println(sh.getCell("D3"));
-        System.out.println(sh.getCell("H3"));
+    public static void main(String[] args){
+        Spreadsheet e = new Spreadsheet();
+        e.setCell("A1", "+A2");
+        e.setCell("A2", "+B2");
+        e.setCell("B2", "+B1");
+        e.setCell("B1", "+A1");
+        System.out.println(e.getCell("A2"));
+        System.out.println(e.getCell("A1"));
+        System.out.println(e.getCell("B2"));
+        System.out.println(e.getCell("B1"));
+        e.setCell("B1", "gaaaaa");
+        System.out.println(e.getCell("A2"));
+        System.out.println(e.getCell("A1"));
+        System.out.println(e.getCell("B2"));
+        System.out.println(e.getCell("B1"));
     }
-
     public Spreadsheet(){  // constructor principal
         List<String> keys = new ArrayList<>(rowsNumber * columnsNumber);
         // Inicializacion de keys y celdas. Va de fila en fila.
@@ -56,8 +53,9 @@ public class Spreadsheet {
             }
         }
         MainGraph = new SpreadsheetGraph(keys);
+        Circuits = new GraphPaths<>(MainGraph);
     }
-
+    
     public void setCell (String location, double content){
         setCell(location, String.valueOf(content));
     }
@@ -67,7 +65,7 @@ public class Spreadsheet {
     public void setCell (String location, String content) {
         // Asigna nuevo contenido a la celda especificada. Se admite guardar los comandos de las operaciones
         // en las celdas.
-        MainGraph.deleteLinksOf(location);
+        MainGraph.clearCell(location);  // elimina las conecciones con las celdas que referenciaba y elimina su contenido
 
         if(content.startsWith("+")){
             String referenced = content.substring(1);   // obtiene celda refernciada
@@ -82,7 +80,7 @@ public class Spreadsheet {
             String greaterColumn;
             String greaterRow;
 
-            // se determina columna menor y mayor, y fila menor y mayor.
+            // se determina columna menor y mayor, asi como fila menor y mayor.
             if(matches.get(0).compareTo(matches.get(2)) < 0){
                 lesserColumn = matches.get(0);
                 greaterColumn = matches.get(2);
@@ -98,6 +96,7 @@ public class Spreadsheet {
                 greaterRow = matches.get(1);
             }
 
+            // se obtiene indices
             int minCol = COLUMNS.indexOf(lesserColumn);
             int maxCol = COLUMNS.indexOf(greaterColumn);
             int minRow = Integer.parseInt(lesserRow);
@@ -108,7 +107,13 @@ public class Spreadsheet {
                     MainGraph.setCellLink(location, COLUMNS.get(i) + j);
         }
 
-        MainGraph.setCellContent(location, content);
+        Circuits.refreshPaths();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
+
+        List<String> circuit = MainGraph.getPath(location, location);   // Se obtiene ciclo de location. Si no existe, se obtiene null.
+        if(circuit != null && !Circuits.contains(circuit))
+            Circuits.add(circuit);      // Se guarda ciclo si este es nuevo
+
+        MainGraph.setCellContent(location, content);    // Se fija contenido en la celda.
     }
 
     private List<String> getMatches(String regex, String content){
@@ -123,8 +128,9 @@ public class Spreadsheet {
 
     public String getCell (String location) {
         // Devuelve el contenido de la celda especificada. Si el contenido es una operacion entonces devuelve
-        // el resultado; si es una referncia, devuelve el contenido de la celda referida.
-        String content = MainGraph.getCellContent(location);
+        // el resultado; si es una referncia, devuelve el contenido de la celda referida. En caso esta celda pertenezca
+        // a algun ciclo, retorna 'AUTOREF'.
+        String content = Circuits.contains(location) ? "AUTOREF" : MainGraph.getCellContent(location);  // Si celda pertenece a un ciclo en el grafo, entonces devuelve AUTOREF
 
         if(content.startsWith("+")){
             String referenced = MainGraph.getCellLink(location);    // se obtiene celda a la que refiere
@@ -203,9 +209,9 @@ public class Spreadsheet {
         }
         return result;
     }
-
+    
     private List<Double> getAdjacentValues(List<String> adjacents){
-        // Retorna lista con los contenidos de las celdas de adjacents que son numeros.
+        // Retorna lista con los contenidos de las celdas de adyacentes que son numeros.
         // Si no se reconoce ninguno como numero, entonces la lista estara vacia.
         List<Double> values = new ArrayList<>(adjacents.size());
         for(String cell : adjacents){
@@ -216,5 +222,9 @@ public class Spreadsheet {
             } catch (NumberFormatException _){}
         }
         return values;
+    }
+    
+    public String getValue(String location){
+        return MainGraph.getCellContent(location);
     }
 }

@@ -9,8 +9,5 @@
         <module name="basic-spreadsheet" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Basic_Spreadsheet" target="24" />
-    </bytecodeTargetLevel>
   </component>
 </project>
