@@ -107,7 +107,7 @@ public class Spreadsheet {
                     MainGraph.setCellLink(location, COLUMNS.get(i) + j);
         }
 
-        Circuits.refreshPaths();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
+        Circuits.refreshPathsAndFindCircuits();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
 
         List<String> circuit = MainGraph.getPath(location, location);   // Se obtiene ciclo de location. Si no existe, se obtiene null.
         if(circuit != null && !Circuits.contains(circuit))
