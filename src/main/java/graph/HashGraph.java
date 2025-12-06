@@ -2,9 +2,9 @@ package graph;
 
 import java.util.*;
 
-public class HashGraph<K, T extends Comparable<T> > {
+public class HashGraph<K extends Comparable<K>, T extends Comparable<T> > {
 
-    private Map<K, Vertex<K, T>> Vertices = new HashMap<>();   // lista de llaves con vertices
+    private final Map<K, Vertex<K, T>> Vertices = new HashMap<>();   // lista de llaves con vertices
 
     public HashGraph(List<K> keys){
         // Se inicializa grafo con los elementos de keys como llaves y un vertice para
@@ -39,12 +39,8 @@ public class HashGraph<K, T extends Comparable<T> > {
         Vertices.replace(key, vertex);
     }
 
-    public boolean isVertexCircuit(K key){
-        return getVertex(key).isCircuit();
-    }
-
-    public void setVertexCircuit(K key, boolean circuit){
-        getVertex(key).setCircuit(circuit);
+    public List<Vertex<K, T>> getAdjacentVertices(K key){
+        return getVertex(key).getAdjacents();
     }
 
     public List<Vertex<K, T>> getAllVertices () {
@@ -59,7 +55,7 @@ public class HashGraph<K, T extends Comparable<T> > {
     public List<K> getPath(K start, K end){
         // Clase local para instanciar vertices con un campo que especifique si fueron visitados.
         // Hace falta usar el metodo setAdjacents para obtener los adyacentes.
-        class vertex {
+        class vertex{
             public K node;
             public boolean visited; // false por default
             public List<vertex> adjacents;
@@ -67,11 +63,19 @@ public class HashGraph<K, T extends Comparable<T> > {
             public vertex(K node){
                 this.node = node;
             }
-            public void setAdjacents(){
+            public void setAdjacents(Stack<vertex> stack, K end){
                 adjacents = new ArrayList<>();
-                for(Vertex<K, T> v : getVertex(node).getAdjacents()){
-                    adjacents.add(new vertex(v.getKey()));
-                }
+                for(Vertex<K, T> v : getVertex(node).getAdjacents())
+                    // solo anade los vertices por los que no se haya pasado (los del stack) y el que no sea final.
+                    // La condicion para verificar si es el final solo existe para poder encontrar ciclos.
+                    if(!contains(v.getKey(), stack) || v.getKey().equals(end))
+                        adjacents.add(new vertex(v.getKey()));
+            }
+            private boolean contains(K vert, Stack<vertex> stack){
+                for(vertex v : stack)
+                    if(v.node.equals(vert))
+                        return true;
+                return false;
             }
         }
 
@@ -82,7 +86,7 @@ public class HashGraph<K, T extends Comparable<T> > {
         vertex trav = new vertex(start);
         do {
             boolean allvisited = true;
-            if(trav.adjacents == null) trav.setAdjacents();
+            if(trav.adjacents == null) trav.setAdjacents(path, end); // lista puede tener vertices o estar vacia (imposible null)
             for(vertex v : trav.adjacents){
                 if(!v.visited){
                     path.push(trav);
@@ -93,6 +97,7 @@ public class HashGraph<K, T extends Comparable<T> > {
             }
             if(allvisited){
                 if(path.isEmpty()) break;
+                trav.visited = true;
                 trav = path.pop();
             }
         } while (!trav.node.equals(end));

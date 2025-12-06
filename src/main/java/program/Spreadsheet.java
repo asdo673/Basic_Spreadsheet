@@ -1,9 +1,9 @@
 package program;
 
+import graph.paths.GraphPaths;
 import graph.SpreadsheetGraph;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +15,7 @@ public class Spreadsheet {
     private static final int rowsNumber = 20;   // Numero de filas
     private static final int columnsNumber = 8;    // Numero de columnas
     private final SpreadsheetGraph MainGraph;     // Grafo que conforma la estructura del spreadsheet
-    private final List<List<String>> Circuits;
+    private final GraphPaths<String, String> Circuits;      // Grafo que guarda ciclos
 
     static {
         // inicializacion de lista de columnas
@@ -33,7 +33,15 @@ public class Spreadsheet {
         e.setCell("A2", "+B2");
         e.setCell("B2", "+B1");
         e.setCell("B1", "+A1");
-        e.MainGraph.getPath("A1", "A1");
+        System.out.println(e.getCell("A2"));
+        System.out.println(e.getCell("A1"));
+        System.out.println(e.getCell("B2"));
+        System.out.println(e.getCell("B1"));
+        e.setCell("B1", "gaaaaa");
+        System.out.println(e.getCell("A2"));
+        System.out.println(e.getCell("A1"));
+        System.out.println(e.getCell("B2"));
+        System.out.println(e.getCell("B1"));
     }
     public Spreadsheet(){  // constructor principal
         List<String> keys = new ArrayList<>(rowsNumber * columnsNumber);
@@ -45,7 +53,7 @@ public class Spreadsheet {
             }
         }
         MainGraph = new SpreadsheetGraph(keys);
-        Circuits = new LinkedList<>();
+        Circuits = new GraphPaths<>(MainGraph);
     }
     
     public void setCell (String location, double content){
@@ -99,28 +107,13 @@ public class Spreadsheet {
                     MainGraph.setCellLink(location, COLUMNS.get(i) + j);
         }
 
-        if(!Circuits.isEmpty()){
-            for(List<String> l : Circuits){
-                testCircuit(l);
-            }
-        }
+        Circuits.refreshPaths();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
 
-        List<String> circuit = MainGraph.getPath(location, location);
-        if(circuit != null && !Circuits.contains(circuit)){     // si existe circuito y este no esta en la lista de circuitos, entonces se marcan y agregan
-            for(String cell : circuit){
-                MainGraph.setVertexCircuit(cell, true);
-            }
-            Circuits.add(circuit);
-        } else MainGraph.setVertexCircuit(location, true);
+        List<String> circuit = MainGraph.getPath(location, location);   // Se obtiene ciclo de location. Si no existe, se obtiene null.
+        if(circuit != null && !Circuits.contains(circuit))
+            Circuits.add(circuit);      // Se guarda ciclo si este es nuevo
 
-        MainGraph.setCellContent(location, content);
-    }
-
-    private void testCircuit(List<String> circuit){
-        for(int i = 0; i < circuit.size() - 1; i++){
-            if( !MainGraph.getAllCellLinks(circuit.get(i))
-                        .contains(circuit.get(i+1)) ) break;
-        }
+        MainGraph.setCellContent(location, content);    // Se fija contenido en la celda.
     }
 
     private List<String> getMatches(String regex, String content){
@@ -135,8 +128,9 @@ public class Spreadsheet {
 
     public String getCell (String location) {
         // Devuelve el contenido de la celda especificada. Si el contenido es una operacion entonces devuelve
-        // el resultado; si es una referncia, devuelve el contenido de la celda referida.
-        String content = MainGraph.getCellContent(location);
+        // el resultado; si es una referncia, devuelve el contenido de la celda referida. En caso esta celda pertenezca
+        // a algun ciclo, retorna 'AUTOREF'.
+        String content = Circuits.contains(location) ? "AUTOREF" : MainGraph.getCellContent(location);  // Si celda pertenece a un ciclo en el grafo, entonces devuelve AUTOREF
 
         if(content.startsWith("+")){
             String referenced = MainGraph.getCellLink(location);    // se obtiene celda a la que refiere
@@ -217,7 +211,7 @@ public class Spreadsheet {
     }
     
     private List<Double> getAdjacentValues(List<String> adjacents){
-        // Retorna lista con los contenidos de las celdas de adjacents que son numeros.
+        // Retorna lista con los contenidos de las celdas de adyacentes que son numeros.
         // Si no se reconoce ninguno como numero, entonces la lista estara vacia.
         List<Double> values = new ArrayList<>(adjacents.size());
         for(String cell : adjacents){
