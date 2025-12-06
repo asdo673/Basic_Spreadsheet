@@ -108,6 +108,8 @@ public class HashGraph<K extends Comparable<K>, T extends Comparable<T> > {
             for(vertex v : path){
                 finalPath.add(v.node);
             }
+            // Se agrega el final
+            finalPath.add(end);
         }
 
         return finalPath;
