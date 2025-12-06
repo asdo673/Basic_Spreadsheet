@@ -1,11 +1,14 @@
 package graph;
 
+import java.io.BufferedReader;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
 // Clase especifica para definir la estructura del spreadsheet. Es subclase de HashGraph
 public class SpreadsheetGraph extends HashGraph<String, String>{
-
+    StreamTokenizer fIn;
     public SpreadsheetGraph(List<String> keys) {
         // Se inicializa grafo con los elementos de keys como llaves y un vertice para
         // cada uno. Value de cada vertice es String vacio.
@@ -45,5 +48,6 @@ public class SpreadsheetGraph extends HashGraph<String, String>{
         getVertex(key).clear();
         getVertex(key).setValue("");
     }
+    
 
 }

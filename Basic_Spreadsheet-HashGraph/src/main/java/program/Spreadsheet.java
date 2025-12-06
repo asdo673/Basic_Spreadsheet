@@ -1,6 +1,10 @@
 package program;
 
 import graph.SpreadsheetGraph;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +18,7 @@ public class Spreadsheet {
     private static final int rowsNumber = 20;   // Numero de filas
     private static final int columnsNumber = 8;    // Numero de columnas
     private final SpreadsheetGraph MainGraph;     // Grafo que conforma la estructura del spreadsheet
-
+    private StreamTokenizer fIn;
     static {
         // inicializacion de lista de columnas
         COLUMNS = new ArrayList<>(COLUMN.values().length);
@@ -100,7 +104,100 @@ public class Spreadsheet {
 
         return matchesList;
     }
+    
+    
+    public double interpreter(String location) throws IOException{
+        String expression = getValue(location);
+        
+        fIn = new StreamTokenizer(
+                new BufferedReader(new StringReader(expression))
+        );
+        
+        fIn.wordChars('0','9');
+        fIn.wordChars('$','$');
+        fIn.wordChars('.', '.');
 
+        fIn.ordinaryChar('/');
+        fIn.ordinaryChar('-');
+        fIn.ordinaryChar(',');
+        return  expression();
+        
+    }
+    
+    private double expression() throws IOException{
+        double t = term();
+        
+        while(true){
+            fIn.nextToken();
+            
+            switch(fIn.ttype){
+                case '+': t += term(); break;
+                case '-': t -= term(); break;
+                default : fIn.pushBack(); return t;
+            }
+        }  
+    }
+    
+    
+    private double term() throws IOException{
+        double f = factor();
+    
+        while(true){
+            fIn.nextToken();
+            
+            switch(fIn.ttype){
+                case '*': f *= factor(); break;
+                case '/': f /= factor(); break;
+                default : fIn.pushBack(); return f;
+            }
+        }
+    }
+    
+    private double factor() throws IOException{ 
+        double val, minus = 1.0;
+        fIn.nextToken();
+        while(fIn.ttype == '+' || fIn.ttype == '-'){
+            if(fIn.ttype == '-')
+                minus *= -1;
+            fIn.nextToken();
+        }
+        
+        if(fIn.ttype == fIn.TT_NUMBER || fIn.ttype == '.'){
+            if(fIn.ttype == fIn.TT_NUMBER){
+                val = fIn.nval;
+                fIn.nextToken();
+            }
+             else val = 0;
+            if(fIn.ttype == ','){
+                fIn.nextToken();
+                if(fIn.ttype == fIn.TT_NUMBER){
+                    String s = fIn.nval + "";
+                    s = "." + s.substring(0,s.indexOf('.'));
+                    val += Double.valueOf(s);
+                }
+                else fIn.pushBack();
+            }
+            else fIn.pushBack();
+        }
+        else if(fIn.ttype == '('){
+            val = expression();
+            if(fIn.ttype == ')')
+                fIn.nextToken();
+            else {
+                System.out.println("Falta un parentesis al cerrar la expresion");
+                Runtime.getRuntime().exit(-1);
+            }
+        }
+        else {
+            val = Double.parseDouble(); A1 @sum(A1..A2) A1 = 10 + C5
+        }
+        
+        return minus*val;
+    }
+    public String getCellOperation(String operation){
+        
+    }
+    
     public String getCell (String location) {
         // Devuelve el contenido de la celda especificada. Si el contenido es una operacion entonces devuelve
         // el resultado; si es una referncia, devuelve el contenido de la celda referida.
