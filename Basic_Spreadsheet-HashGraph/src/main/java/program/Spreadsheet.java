@@ -47,7 +47,7 @@ public class Spreadsheet {
         MainGraph.deleteLinksOf(location);
 
         if (content.startsWith("+")) { //Primera operacion comprueba si se intenta realizar una operacion de referencia.
-            if (validarReferencia(content)) { //Se valida
+            if (isReference(content)) { //Se valida
                 String ref = content.substring(1).trim(); //Se obtiene la celda de referencia
                 MainGraph.setCellLink(location, ref); //Se crea el enlace de referencia individual
                 MainGraph.setCellContent(location, content);//Se guarda el contenido de la operacion
@@ -59,21 +59,21 @@ public class Spreadsheet {
 
         if (isOperation(content)) { //se valida si contiene + - / *
             if (validarOperacion(content)) { // se valida si la operacion es valida, este metodo es mas complejo
-                crearLinksDesdeExpresion(location, content);//Se crear el enlace para los vertices individuales
-                crearLinksDesdeBloques(location, content);//Se crear el enlace para los vertices en bloques
+                crearLinksDesdeExpresion(location, content);//Se crear el enlace para los vertices individuales //Se debe corregir que al agregar debe evitar las copias #BUG
+                crearLinksDesdeBloques(location, content);//Se crear el enlace para los vertices en bloques //Se debe corregir que al agregar debe evitar las copias #BUG
                 MainGraph.setCellContent(location, content);
             } else {
                 MainGraph.setCellContent(location, "ERROR");
             }
-            return; 
+            return;
     }
 
         MainGraph.setCellContent(location, content); //Si no es ni linked ni operation setea el valor
     }
     
-    private boolean validarReferencia(String s) {
-        return s.matches("\\+[A-H][1-9][0-9]?");// Comprueba si contiene el patron \\+(signo literal),[A-H]Letra entre A-H,[1-9] numero entre 1-9,[0-9]? numero opcional entre 0 y 9 puesto que las filas son del 1 al 20
-    }
+    private boolean isReference(String s) {
+        return s.matches("\\+([A-H][0-9]|[A-H]20|[A-H][1][0-9])");// Comprueba si contiene el patron \\+(signo literal),[A-H]Letra entre A-H,[1-9] numero entre 1-9,[0-9]? numero opcional entre 0 y 9 puesto que las filas son del 1 al 20
+    } 
     
     private boolean isOperation(String s) {
         return s.contains("+") || s.contains("-") ||
@@ -91,8 +91,8 @@ public class Spreadsheet {
             st.wordChars('A', 'Z');//Permite que palabras contengan letras
             st.wordChars('a','z');
             st.wordChars('0','9');//Permite que palabras contengan numeros
-            st.whitespaceChars(' ', ' ');//Elimina todo los espacios en blanco "      ";
-            
+            st.whitespaceChars(' ', ' ');//Elimina todo los espacios en blanco;
+
 //Convierte a todo estos simbolos en elementos unicos//
             st.ordinaryChar('+');
             st.ordinaryChar('-');
@@ -148,9 +148,9 @@ public class Spreadsheet {
         }
 
         if (st.ttype == StreamTokenizer.TT_NUMBER) return; //verifica si es numero,si lo es vuelve
-
+ 
         if (st.ttype == StreamTokenizer.TT_WORD) { //Comprueba si es una celda y la valida
-            if (!st.sval.matches("[A-H][1-9][0-9]?"))
+            if (!st.sval.matches("[A-H][0-9]|[A-H]20|[A-H][1][0-9]"))
                 throw new IOException("Celda invalida");
             return;
         }
@@ -164,17 +164,18 @@ public class Spreadsheet {
         }
 
         if (st.ttype == '@') { //Valida si la operacion '@' sea valida
-            st.nextToken();
-            if (st.ttype != StreamTokenizer.TT_WORD) //Lo que sigue sea una palabra
-                throw new IOException("Funcion invalida");
+            st.nextToken(); //Especificar que sea sum,avg,max,min #bug
+            if (st.ttype != StreamTokenizer.TT_WORD)
+            //Lo que sigue sea una palabra
+                throw new IOException("Operacion invalida");
 
             st.nextToken();
             if (st.ttype != '(') //Lo que sigue sea parentesis
                 throw new IOException("Falta (");
 
             st.nextToken();
-            if (!st.sval.matches("[A-H][1-9][0-9]?"))//Lo que sigue sea un indice de celda valido
-                throw new IOException("Rango invalido");
+            if (!st.sval.matches("[A-H][0-9]|[A-H]20|[A-H][1][0-9]"))//Lo que sigue sea un indice de celda valido
+                throw new IOException("Celda invalida");
 
             st.nextToken();
             if (st.ttype != '.') throw new IOException();
@@ -182,7 +183,7 @@ public class Spreadsheet {
             if (st.ttype != '.') throw new IOException(); //Lo que sigue sea ".."
 
             st.nextToken();
-            if (!st.sval.matches("[A-H][1-9][0-9]?"))
+            if (!st.sval.matches("[A-H][0-9]|[A-H]20|[A-H][1][0-9]"))
                 throw new IOException("Rango invalido"); //Denuevo si es un indice de celda valido
 
             st.nextToken();
@@ -196,9 +197,9 @@ public class Spreadsheet {
     }
 
     private void crearLinksDesdeExpresion(String location, String expr) {
-        Matcher m = Pattern.compile("[A-H][1-9][0-9]?").matcher(expr);//Crea un objeto matcher para utilizarlo
+        Matcher m = Pattern.compile("[A-H][0-9]|[A-H]20|[A-H][1][0-9]").matcher(expr);//Crea un objeto matcher para utilizarlo
+        //Una mejora puede ser que evite a las celdas dentro de una operacion #upgrade
         //sobre la expresion
-
         while (m.find()) { //usa find para empezar a encontrar las condiciones
             String ref = m.group(); //y group para obtener el valor de la coincidencia
             MainGraph.setCellLink(location, ref);//setea el enlace
@@ -207,7 +208,7 @@ public class Spreadsheet {
     
     private void crearLinksDesdeBloques(String location, String expr) {
         Pattern pattern = Pattern.compile(
-            "@(sum|avg|min|max)\\(([A-H][1-9][0-9]?)\\.\\.([A-H][1-9][0-9]?)\\)"
+            "@(sum|avg|min|max)\\(([A-H][0-9]|[A-H]20|[A-H][1][0-9])\\.\\.([A-H][0-9]|[A-H]20|[A-H][1][0-9])\\)"
         );
         Matcher matcher = pattern.matcher(expr); //Crea un objeto matcher para tokenizar la expresion
         //Con el regex,lo agrupa en 3 elementos, la operacion,celda1 y celda2;
@@ -442,15 +443,13 @@ public class Spreadsheet {
         
         //Reglas si todos los bloques no tienen valor
         if (values.isEmpty()) {
-            // sum|min|max devuelven 0, avg devuelve ERROR
-            if (func.equals("avg")) {
-                throw new IOException("Sin valores validos para avg");
-            }
+            // sum|min|max|avg devuelven 0
             return 0.0;
         }
 
         double result;
         //switch sencillo para calcular la operacion
+        //Debo volver a verificar las celdas en la operaciones #BUG
         switch (func) {
             case "sum":
                 result = 0.0;
@@ -466,7 +465,7 @@ public class Spreadsheet {
                     if (d < result) result = d;
                 return result;
             case "max":
-                result = values.getFirst();
+                result = values.getFirst(); //
                 for (double d : values)
                     if (d > result) result = d;
                 return result;
@@ -507,4 +506,3 @@ public class Spreadsheet {
     
 } 
     
- 

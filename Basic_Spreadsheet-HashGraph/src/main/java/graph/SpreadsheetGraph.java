@@ -1,12 +1,14 @@
 package graph;
 
-import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
+//Se debe corregir que al agregar debe evitar las copias #BUG
+
+
 
 // Clase especifica para definir la estructura del spreadsheet. Es subclase de HashGraph
 public class SpreadsheetGraph extends HashGraph<String, String>{
-    StreamTokenizer fIn;
+    
     public SpreadsheetGraph(List<String> keys) {
         // Se inicializa grafo con los elementos de keys como llaves y un vertice para
         // cada uno. Value de cada vertice es String vacio.
@@ -24,8 +26,10 @@ public class SpreadsheetGraph extends HashGraph<String, String>{
     }
 
     public void setCellLink(String OriginKey, String DestinyKey){
-        getVertex(OriginKey).setAdjacent(
+        if(!getAllCellLinks(OriginKey).contains(DestinyKey)){
+                getVertex(OriginKey).setAdjacent(
                 getVertex(DestinyKey));
+        }
     }
 
     public String getCellLink(String key){
