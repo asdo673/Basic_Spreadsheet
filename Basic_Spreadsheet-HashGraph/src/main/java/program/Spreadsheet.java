@@ -46,49 +46,67 @@ public class Spreadsheet {
     }
     
     public void setCell(String location, String content) {
-
-        MainGraph.deleteLinksOf(location);
-
-        if (content.startsWith("+")) { //Primera operacion comprueba si se intenta realizar una operacion de referencia.
-            if (isReference(content)) { //Se valida
-                String ref = content.substring(1).trim(); //Se obtiene la celda de referencia
-                MainGraph.setCellLink(location, ref); //Se crea el enlace de referencia individual
-                
-                Circuits.refreshPathsAndFindCircuits();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
-                List<String> circuit = MainGraph.getPath(location, location);   // Se obtiene ciclo de location. Si no existe, se obtiene null.
-                if(circuit != null && !Circuits.contains(circuit))
-                Circuits.add(circuit);   
-                
-                MainGraph.setCellContent(location, content);//Se guarda el contenido de la operacion
-            } else {
-                MainGraph.setCellContent(location, "ERROR");//Si se intenta referencia a una celda inexistente se setea error
-            }
-            return;//termina el metodo
+        // 1. Validamos celda
+        if (!location.matches("[A-H](?:[0-9]|1[0-9]|20)")) {
+            return; // ubicación invalida, no hacemos nada
         }
 
-        if (isOperation(content)) { //se valida si contiene + - / *
-            if (validarOperacion(content)) { // se valida si la operacion es valida, este metodo es mas complejo
-                
-                crearLinksDesdeExpresion(location, content);//Se crear el enlace para los vertices individuales //Se debe corregir que al agregar debe evitar las copias #BUG
-                
-                crearLinksDesdeBloques(location, content);//Se crear el enlace para los vertices en bloques //Se debe corregir que al agregar debe evitar las copias #BUG
-                Circuits.refreshPathsAndFindCircuits();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
-                List<String> circuit = MainGraph.getPath(location, location);   // Se obtiene ciclo de location. Si no existe, se obtiene null.
-                if(circuit != null && !Circuits.contains(circuit))
-                Circuits.add(circuit); 
-                
-                MainGraph.setCellContent(location, content);
-            } else {
-                MainGraph.setCellContent(location, "ERROR");
-            }
+        // 2. Siempre, al inicio, borro los links antiguos de esa celda
+        MainGraph.deleteLinksOf(location);
+
+        // 3. Caso 1: referencia simple 
+        if (content.startsWith("+")) {
+            handleReference(location, content);
             return;
+        }
+
+        // 4. Caso 2: operacion
+        if (isOperation(content)) {
+            handleOperation(location, content);
+            return;
+        }
+
+        // 5. Caso 3: valor normal puede ser palabra o numero
+        refreshCircuitsFor(location);
+        MainGraph.setCellContent(location, content);
     }
-        Circuits.refreshPathsAndFindCircuits();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
-        List<String> circuit = MainGraph.getPath(location, location);   // Se obtiene ciclo de location. Si no existe, se obtiene null.
-        if(circuit != null && !Circuits.contains(circuit))
-        Circuits.add(circuit);   
-        MainGraph.setCellContent(location, content); //Si no es ni linked ni operation setea el valor
+
+    private void handleReference(String location, String content) {
+        if (isReference(content)) { // se valida si es una referencia valida
+            String ref = content.substring(1).trim(); // celda de referencia sin el '+'
+            MainGraph.setCellLink(location, ref);     // enlace de referencia
+
+            refreshCircuitsFor(location);
+            MainGraph.setCellContent(location, content); // guarda el contenido tal cual "+B2"
+        } else {
+            MainGraph.setCellContent(location, "ERROR"); // referencia invalida
+        }
     }
+
+    private void handleOperation(String location, String content) {
+        if (validarOperacion(content)) {
+            // Enlaces a celdas individuales
+            crearLinksDesdeExpresion(location, content);
+
+            // Enlaces a bloques
+            crearLinksDesdeBloques(location, content);
+
+            refreshCircuitsFor(location);
+            
+            MainGraph.setCellContent(location, content);
+        } else {
+            MainGraph.setCellContent(location, "ERROR"); // operación inválida
+        }
+    }
+
+    private void refreshCircuitsFor(String location) {
+        Circuits.refreshPathsAndFindCircuits();              // limpia y recalcula
+        List<String> circuit = MainGraph.getPath(location, location); // ciclo desde la propia celda
+        if (circuit != null && !Circuits.contains(circuit)) {
+            Circuits.add(circuit);
+        }
+    }
+
     
     private boolean isReference(String s) {
         return s.matches("\\+([A-H][0-9]|[A-H]20|[A-H][1][0-9])");// Comprueba si contiene el patron \\+(signo literal),[A-H]Letra entre A-H,[1-9] numero entre 1-9,[0-9]? numero opcional entre 0 y 9 puesto que las filas son del 1 al 20
@@ -183,10 +201,10 @@ public class Spreadsheet {
         }
 
         if (st.ttype == '@') { //Valida si la operacion '@' sea valida
-            st.nextToken(); //Especificar que sea sum,avg,max,min #bug
-            if (st.ttype != StreamTokenizer.TT_WORD)
-            //Lo que sigue sea una palabra
-                throw new IOException("Operacion invalida");
+            st.nextToken(); //Especificar que sea sum,avg,max,min #SOLUTION
+            if (st.ttype == StreamTokenizer.TT_WORD)
+                if(!(st.sval.equals("sum") || st.sval.equals("avg") || st.sval.equals("max") || st.sval.equals("min")) )
+                    throw new IOException("Operacion invalida");
 
             st.nextToken();
             if (st.ttype != '(') //Lo que sigue sea parentesis
@@ -467,7 +485,7 @@ public class Spreadsheet {
 
         double result;
         //switch sencillo para calcular la operacion
-        //Debo volver a verificar las celdas en la operaciones #BUG
+        //Debo volver a verificar las celdas en la operaciones #SOLU
         switch (func) {
             case "sum":
                 result = 0.0;
@@ -511,7 +529,7 @@ public class Spreadsheet {
             for (int r = minRow; r <= maxRow; r++) {
                 String key = COLUMNS.get(c) + r;
                 String raw = getCell(key);
-                if (raw == null || raw.isBlank()) continue;
+                if (raw.isBlank()) continue;
                 try {
                     double d = Double.parseDouble(raw);
                     vals.add(d);

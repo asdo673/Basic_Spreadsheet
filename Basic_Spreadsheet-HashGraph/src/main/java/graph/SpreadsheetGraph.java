@@ -2,7 +2,6 @@ package graph;
 
 import java.util.ArrayList;
 import java.util.List;
-//Se debe corregir que al agregar debe evitar las copias #BUG
 
 
 

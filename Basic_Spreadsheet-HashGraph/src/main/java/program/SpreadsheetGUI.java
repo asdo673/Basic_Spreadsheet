@@ -140,15 +140,23 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
     private void commandFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandFieldActionPerformed
         String text = commandField.getText();
         String[] texts = ProccesText(text);
-        if(texts.length == 0){
-            
-        }else if(texts.length < 2){
-            spreadsheet.setCell(texts[0],"");
-        }else{
-        spreadsheet.setCell(texts[0],texts[1]);
+
+        if (texts.length > 0 && !texts[0].isEmpty()) {
+            String location = texts[0];
+            String content;
+
+            if (texts.length == 1) {
+                content = "";
+            } else {
+                content = texts[1];
+            }
+
+            spreadsheet.setCell(location, content);
         }
+
         commandField.setText("");
         refreshTable();
+
         
     }//GEN-LAST:event_commandFieldActionPerformed
 
