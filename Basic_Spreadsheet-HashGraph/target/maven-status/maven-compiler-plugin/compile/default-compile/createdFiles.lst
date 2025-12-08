@@ -1,9 +1,13 @@
-program\Spreadsheet.class
 program\SpreadsheetGUI.class
-program\COLUMN.class
+graph\GraphPaths$NODE.class
 program\SpreadsheetGUI$2.class
 graph\SpreadsheetGraph.class
 graph\Vertex.class
-program\SpreadsheetGUI$3.class
 graph\HashGraph.class
 program\SpreadsheetGUI$1.class
+program\Spreadsheet.class
+program\COLUMN.class
+graph\GraphPaths$PATH.class
+graph\GraphPaths.class
+graph\HashGraph$1vertex.class
+program\SpreadsheetGUI$3.class

@@ -1,5 +1,6 @@
 package program;
 
+import graph.GraphPaths;
 import graph.SpreadsheetGraph;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class Spreadsheet {
     private static final int columnsNumber = 8;    // Numero de columnas
     private final SpreadsheetGraph MainGraph;     // Grafo que conforma la estructura del spreadsheet
     private StreamTokenizer fIn;
+    private final GraphPaths<String, String> Circuits; 
     static {
         // inicializacion de lista de columnas
         COLUMNS = new ArrayList<>(COLUMN.values().length);
@@ -40,6 +42,7 @@ public class Spreadsheet {
             }
         }
         MainGraph = new SpreadsheetGraph(keys);
+        Circuits = new GraphPaths<>(MainGraph);
     }
     
     public void setCell(String location, String content) {
@@ -50,6 +53,12 @@ public class Spreadsheet {
             if (isReference(content)) { //Se valida
                 String ref = content.substring(1).trim(); //Se obtiene la celda de referencia
                 MainGraph.setCellLink(location, ref); //Se crea el enlace de referencia individual
+                
+                Circuits.refreshPathsAndFindCircuits();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
+                List<String> circuit = MainGraph.getPath(location, location);   // Se obtiene ciclo de location. Si no existe, se obtiene null.
+                if(circuit != null && !Circuits.contains(circuit))
+                Circuits.add(circuit);   
+                
                 MainGraph.setCellContent(location, content);//Se guarda el contenido de la operacion
             } else {
                 MainGraph.setCellContent(location, "ERROR");//Si se intenta referencia a una celda inexistente se setea error
@@ -59,15 +68,25 @@ public class Spreadsheet {
 
         if (isOperation(content)) { //se valida si contiene + - / *
             if (validarOperacion(content)) { // se valida si la operacion es valida, este metodo es mas complejo
+                
                 crearLinksDesdeExpresion(location, content);//Se crear el enlace para los vertices individuales //Se debe corregir que al agregar debe evitar las copias #BUG
+                
                 crearLinksDesdeBloques(location, content);//Se crear el enlace para los vertices en bloques //Se debe corregir que al agregar debe evitar las copias #BUG
+                Circuits.refreshPathsAndFindCircuits();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
+                List<String> circuit = MainGraph.getPath(location, location);   // Se obtiene ciclo de location. Si no existe, se obtiene null.
+                if(circuit != null && !Circuits.contains(circuit))
+                Circuits.add(circuit); 
+                
                 MainGraph.setCellContent(location, content);
             } else {
                 MainGraph.setCellContent(location, "ERROR");
             }
             return;
     }
-
+        Circuits.refreshPathsAndFindCircuits();   // Actualiza para eliminar los ciclos guardados que ya no existan (por haberse reenlazado celdas).
+        List<String> circuit = MainGraph.getPath(location, location);   // Se obtiene ciclo de location. Si no existe, se obtiene null.
+        if(circuit != null && !Circuits.contains(circuit))
+        Circuits.add(circuit);   
         MainGraph.setCellContent(location, content); //Si no es ni linked ni operation setea el valor
     }
     
@@ -249,8 +268,7 @@ public class Spreadsheet {
     }    
 
     public String getCell(String location) {//Metodo para obtener valor de la celda;
-        String content = MainGraph.getCellContent(location);//Extrae el contenido de la celda
-
+        String content = Circuits.contains(location) ? "AUTOREF" : MainGraph.getCellContent(location);
         content = content.trim(); //Elimina espacos en blanco
 
         // CASO 1: referencia directa +A1 -> copia valor

@@ -2,8 +2,10 @@ package graph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public class HashGraph<K, T extends Comparable<T> > {
 
@@ -31,7 +33,11 @@ public class HashGraph<K, T extends Comparable<T> > {
             );
         }
     }
-
+    
+    public List<Vertex<K, T>> getAdjacentVertices(K key){
+        return getVertex(key).getAdjacents();
+    }
+    
     public Vertex<K, T> getVertex(K key){
         if(!Vertices.containsKey(key))
             throw new NullPointerException("Not such key in the graph.");
@@ -53,5 +59,69 @@ public class HashGraph<K, T extends Comparable<T> > {
         Vertices.get(key).clear();
         Vertices.get(key).setValue(value);
     }
+    
+  public List<K> getPath(K start, K end){
+        // Clase local para instanciar vertices con un campo que especifique si fueron visitados.
+        // Hace falta usar el metodo setAdjacents para obtener los adyacentes.
+        class vertex{
+            public K node;
+            public boolean visited; // false por default
+            public List<vertex> adjacents;
+
+            public vertex(K node){
+                this.node = node;
+            }
+            public void setAdjacents(Stack<vertex> stack, K end){
+                adjacents = new ArrayList<>();
+                for(Vertex<K, T> v : getVertex(node).getAdjacents())
+                    // solo anade los vertices por los que no se haya pasado (los del stack) y el que no sea final.
+                    // La condicion para verificar si es el final solo existe para poder encontrar ciclos.
+                    if(!contains(v.getKey(), stack) || v.getKey().equals(end))
+                        adjacents.add(new vertex(v.getKey()));
+            }
+            private boolean contains(K vert, Stack<vertex> stack){
+                for(vertex v : stack)
+                    if(v.node.equals(vert))
+                        return true;
+                return false;
+            }
+        }
+
+        List<K> finalPath = null;   // Resultado final
+        Stack<vertex> path = new Stack<>();     // Stack para obtener el camino
+
+        // Se obtiene el camino (si existe) por medio de backtracking.
+        vertex trav = new vertex(start);
+        do {
+            boolean allvisited = true;
+            if(trav.adjacents == null) trav.setAdjacents(path, end); // lista puede tener vertices o estar vacia (imposible null)
+            for(vertex v : trav.adjacents){
+                if(!v.visited){
+                    path.push(trav);
+                    trav = v;
+                    allvisited = false;
+                    break;
+                }
+            }
+            if(allvisited){
+                if(path.isEmpty()) break;
+                trav.visited = true;
+                trav = path.pop();
+            }
+        } while (!trav.node.equals(end));
+
+        // Si existe el camino, se guarda en finalPath
+        if(!path.isEmpty()){
+            finalPath = new LinkedList<>();
+            for(vertex v : path){
+                finalPath.add(v.node);
+            }
+            // Se agrega el final
+            finalPath.add(end);
+        }
+
+        return finalPath;
+    }
+
 
 }
