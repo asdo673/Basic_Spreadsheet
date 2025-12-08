@@ -42,260 +42,469 @@ public class Spreadsheet {
         MainGraph = new SpreadsheetGraph(keys);
     }
     
-    public void setCell (String location, double content){
-        setCell(location, String.valueOf(content));
-    }
-    public void setCell (String location, int content){
-        setCell(location, String.valueOf(content));
-    }
-    public void setCell (String location, String content) {
-        // Asigna nuevo contenido a la celda especificada. Se admite guardar los comandos de las operaciones
-        // en las celdas.
+    public void setCell(String location, String content) {
+
         MainGraph.deleteLinksOf(location);
 
-        if(content.startsWith("+")){
-            String referenced = content.substring(1);   // obtiene celda refernciada
-            MainGraph.setCellLink(location, referenced);    // celda actual apuntara a referenciada
-        }
-        else if (content.startsWith("@")){
-            String regex = "[A-H]|1[0-9]|20|[0-9]";
-            List<String> matches = getMatches(regex, content);      // se obtiene lista con las 2 columnas y
-                                                                    // las 2 filas que delimitan el bloque seleccionado
-            String lesserColumn;
-            String lesserRow;
-            String greaterColumn;
-            String greaterRow;
-
-            // se determina columna menor y mayor, y fila menor y mayor.
-            if(matches.get(0).compareTo(matches.get(2)) < 0){
-                lesserColumn = matches.get(0);
-                greaterColumn = matches.get(2);
+        if (content.startsWith("+")) { //Primera operacion comprueba si se intenta realizar una operacion de referencia.
+            if (validarReferencia(content)) { //Se valida
+                String ref = content.substring(1).trim(); //Se obtiene la celda de referencia
+                MainGraph.setCellLink(location, ref); //Se crea el enlace de referencia individual
+                MainGraph.setCellContent(location, content);//Se guarda el contenido de la operacion
             } else {
-                lesserColumn = matches.get(2);
-                greaterColumn = matches.get(0);
+                MainGraph.setCellContent(location, "ERROR");//Si se intenta referencia a una celda inexistente se setea error
             }
-            if (Integer.parseInt(matches.get(1)) < Integer.parseInt(matches.get(3))){
-                lesserRow = matches.get(1);
-                greaterRow = matches.get(3);
-            } else {
-                lesserRow = matches.get(3);
-                greaterRow = matches.get(1);
-            }
-
-            int minCol = COLUMNS.indexOf(lesserColumn);
-            int maxCol = COLUMNS.indexOf(greaterColumn);
-            int minRow = Integer.parseInt(lesserRow);
-            int maxRow = Integer.parseInt(greaterRow);
-            for(int i = minCol; i <= maxCol; i++)
-                for(int j = minRow; j <= maxRow; j++)
-                    // Se enlaza la celda actual con cada vertice del bloque seleccionado
-                    MainGraph.setCellLink(location, COLUMNS.get(i) + j);
+            return;//termina el metodo
         }
 
-        MainGraph.setCellContent(location, content);
+        if (isOperation(content)) { //se valida si contiene + - / *
+            if (validarOperacion(content)) { // se valida si la operacion es valida, este metodo es mas complejo
+                crearLinksDesdeExpresion(location, content);//Se crear el enlace para los vertices individuales
+                crearLinksDesdeBloques(location, content);//Se crear el enlace para los vertices en bloques
+                MainGraph.setCellContent(location, content);
+            } else {
+                MainGraph.setCellContent(location, "ERROR");
+            }
+            return; 
     }
 
-    private List<String> getMatches(String regex, String content){
-        // retorna lista con las subcadenas que encagen con el patron determinado en regex.
-        Matcher matcher = Pattern.compile(regex).matcher(content);
-        List<String> matchesList = new ArrayList<>();
-        while(matcher.find())
-            matchesList.add(matcher.group());
-
-        return matchesList;
+        MainGraph.setCellContent(location, content); //Si no es ni linked ni operation setea el valor
     }
     
+    private boolean validarReferencia(String s) {
+        return s.matches("\\+[A-H][1-9][0-9]?");// Comprueba si contiene el patron \\+(signo literal),[A-H]Letra entre A-H,[1-9] numero entre 1-9,[0-9]? numero opcional entre 0 y 9 puesto que las filas son del 1 al 20
+    }
     
-    public double interpreter(String location) throws IOException{
-        String expression = getValue(location);
-        
-        fIn = new StreamTokenizer(
-                new BufferedReader(new StringReader(expression))
+    private boolean isOperation(String s) {
+        return s.contains("+") || s.contains("-") ||
+                s.contains("*") || s.contains("/") ||
+                s.contains("@");
+    } //Busca en la expresion si contiene alguno de estos elementos
+    
+    private boolean validarOperacion(String expr) {//El metodo simplemente espera que se lanze un error si la operacion no es valida
+        try {
+            StreamTokenizer st = new StreamTokenizer(
+                    new BufferedReader(new StringReader(expr))
         );
-        
-        fIn.wordChars('0','9');
-        fIn.wordChars('$','$');
-        fIn.wordChars('.', '.');
+            st.resetSyntax(); //borra toda las reglas por defecto del tokenizador
+            st.parseNumbers();//Esto reconoce a los numeros no como strings si no como doubles
+            st.wordChars('A', 'Z');//Permite que palabras contengan letras
+            st.wordChars('a','z');
+            st.wordChars('0','9');//Permite que palabras contengan numeros
+            st.whitespaceChars(' ', ' ');//Elimina todo los espacios en blanco "      ";
+            
+//Convierte a todo estos simbolos en elementos unicos//
+            st.ordinaryChar('+');
+            st.ordinaryChar('-');
+            st.ordinaryChar('*');
+            st.ordinaryChar('/');
+            st.ordinaryChar('(');
+            st.ordinaryChar(')');
+            st.ordinaryChar('@');
+            st.ordinaryChar('.');
+            
 
-        fIn.ordinaryChar('/');
-        fIn.ordinaryChar('-');
-        fIn.ordinaryChar(',');
-        return  expression();
-        
-    }
-    
-    private double expression() throws IOException{
-        double t = term();
-        
-        while(true){
-            fIn.nextToken();
+            validarExpresion(st); 
+            return true;
             
-            switch(fIn.ttype){
-                case '+': t += term(); break;
-                case '-': t -= term(); break;
-                default : fIn.pushBack(); return t;
-            }
-        }  
-    }
-    
-    
-    private double term() throws IOException{
-        double f = factor();
-    
-        while(true){
-            fIn.nextToken();
-            
-            switch(fIn.ttype){
-                case '*': f *= factor(); break;
-                case '/': f /= factor(); break;
-                default : fIn.pushBack(); return f;
-            }
+        } catch (IOException e) {
+            return false;
         }
     }
     
-    private double factor() throws IOException{ 
-        double val, minus = 1.0;
-        fIn.nextToken();
-        while(fIn.ttype == '+' || fIn.ttype == '-'){
-            if(fIn.ttype == '-')
-                minus *= -1;
-            fIn.nextToken();
-        }
+    private void validarExpresion(StreamTokenizer st) throws IOException {
+        validarTermino(st);
         
-        if(fIn.ttype == fIn.TT_NUMBER || fIn.ttype == '.'){
-            if(fIn.ttype == fIn.TT_NUMBER){
-                val = fIn.nval;
-                fIn.nextToken();
+        while (true) {
+            st.nextToken();
+            if (st.ttype == '+' || st.ttype == '-') {//Manjea a las operacions + o -
+                validarTermino(st);//Lanzando denuevo al ValidarTermino
+            } else {
+                st.pushBack();//Si no es asi regresa, y retrona
+                return;
             }
-             else val = 0;
-            if(fIn.ttype == ','){
-                fIn.nextToken();
-                if(fIn.ttype == fIn.TT_NUMBER){
-                    String s = fIn.nval + "";
-                    s = "." + s.substring(0,s.indexOf('.'));
-                    val += Double.valueOf(s);
+        }
+    }
+
+    private void validarTermino(StreamTokenizer st) throws IOException {
+        validarFactor(st);
+        
+        while (true) {
+            st.nextToken();
+            if (st.ttype == '*' || st.ttype == '/') { //lee el siguiente y maneja las operacions * o /
+                validarFactor(st);//Lanzando de nuevo el validarFactor
+            } else {
+                st.pushBack(); //Si no, retrocede el token y retorna;
+                return;
+            }
+        }
+    }
+
+    private void validarFactor(StreamTokenizer st) throws IOException {
+        st.nextToken(); //Pasa al primer termino tokenizado
+
+        while (st.ttype == '+' || st.ttype == '-') {//Consume los + o - que esten por delante
+            st.nextToken();
+        }
+
+        if (st.ttype == StreamTokenizer.TT_NUMBER) return; //verifica si es numero,si lo es vuelve
+
+        if (st.ttype == StreamTokenizer.TT_WORD) { //Comprueba si es una celda y la valida
+            if (!st.sval.matches("[A-H][1-9][0-9]?"))
+                throw new IOException("Celda invalida");
+            return;
+        }
+
+        if (st.ttype == '(') { //Aca si es una operacion compleja,vuelve a llamar a validarexpresion
+            validarExpresion(st);
+            st.nextToken();
+            if (st.ttype != ')')//Si la expresion es valida comprueba que este debidamente cerrada
+                throw new IOException("Falta )");
+            return;
+        }
+
+        if (st.ttype == '@') { //Valida si la operacion '@' sea valida
+            st.nextToken();
+            if (st.ttype != StreamTokenizer.TT_WORD) //Lo que sigue sea una palabra
+                throw new IOException("Funcion invalida");
+
+            st.nextToken();
+            if (st.ttype != '(') //Lo que sigue sea parentesis
+                throw new IOException("Falta (");
+
+            st.nextToken();
+            if (!st.sval.matches("[A-H][1-9][0-9]?"))//Lo que sigue sea un indice de celda valido
+                throw new IOException("Rango invalido");
+
+            st.nextToken();
+            if (st.ttype != '.') throw new IOException();
+            st.nextToken();
+            if (st.ttype != '.') throw new IOException(); //Lo que sigue sea ".."
+
+            st.nextToken();
+            if (!st.sval.matches("[A-H][1-9][0-9]?"))
+                throw new IOException("Rango invalido"); //Denuevo si es un indice de celda valido
+
+            st.nextToken();
+            if (st.ttype != ')')
+                throw new IOException("Falta )");//Si al terminar se cierra con ) debidamente
+
+            return;
+        }
+
+        throw new IOException("Factor invalido"); //Si es una palabra o otro termino incorrecto
+    }
+
+    private void crearLinksDesdeExpresion(String location, String expr) {
+        Matcher m = Pattern.compile("[A-H][1-9][0-9]?").matcher(expr);//Crea un objeto matcher para utilizarlo
+        //sobre la expresion
+
+        while (m.find()) { //usa find para empezar a encontrar las condiciones
+            String ref = m.group(); //y group para obtener el valor de la coincidencia
+            MainGraph.setCellLink(location, ref);//setea el enlace
+        }
+    }
+    
+    private void crearLinksDesdeBloques(String location, String expr) {
+        Pattern pattern = Pattern.compile(
+            "@(sum|avg|min|max)\\(([A-H][1-9][0-9]?)\\.\\.([A-H][1-9][0-9]?)\\)"
+        );
+        Matcher matcher = pattern.matcher(expr); //Crea un objeto matcher para tokenizar la expresion
+        //Con el regex,lo agrupa en 3 elementos, la operacion,celda1 y celda2;
+
+        while (matcher.find()) {
+
+            String from = matcher.group(2);//Celda 1;
+            String to   = matcher.group(3);//Celda 2;
+
+            int colFrom = COLUMNS.indexOf(from.substring(0, 1));//Copiado y modificado de akim
+            int rowFrom = Integer.parseInt(from.substring(1));
+
+            int colTo = COLUMNS.indexOf(to.substring(0, 1));
+            int rowTo = Integer.parseInt(to.substring(1));
+
+            int minCol = Math.min(colFrom, colTo);
+            int maxCol = Math.max(colFrom, colTo);
+            int minRow = Math.min(rowFrom, rowTo);
+            int maxRow = Math.max(rowFrom, rowTo);
+
+            for (int c = minCol; c <= maxCol; c++) {
+                for (int r = minRow; r <= maxRow; r++) {
+
+                    String key = COLUMNS.get(c) + r;
+                    MainGraph.setCellLink(location, key);//Setea todo los enlaces del bloque
+                    //No se si crea un problema pero repite los vertices si existe una funcion
+                    //tal como @sum(A1..B1) -> crea doble enlace con A1 y B1;
+
                 }
-                else fIn.pushBack();
-            }
-            else fIn.pushBack();
-        }
-        else if(fIn.ttype == '('){
-            val = expression();
-            if(fIn.ttype == ')')
-                fIn.nextToken();
-            else {
-                System.out.println("Falta un parentesis al cerrar la expresion");
-                Runtime.getRuntime().exit(-1);
             }
         }
-        else {
-            val = Double.parseDouble(); A1 @sum(A1..A2) A1 = 10 + C5
-        }
-        
-        return minus*val;
     }
-    public String getCellOperation(String operation){
-        
-    }
+
     
-    public String getCell (String location) {
-        // Devuelve el contenido de la celda especificada. Si el contenido es una operacion entonces devuelve
-        // el resultado; si es una referncia, devuelve el contenido de la celda referida.
-        String content = MainGraph.getCellContent(location);
+    
+    public String getValue(String location) {
+        return MainGraph.getCellContent(location); //Regresa el contenido de la celda;
+    }    
 
-        if(content.startsWith("+")){
-            String referenced = MainGraph.getCellLink(location);    // se obtiene celda a la que refiere
-            content = getCell(referenced);
+    public String getCell(String location) {//Metodo para obtener valor de la celda;
+        String content = MainGraph.getCellContent(location);//Extrae el contenido de la celda
+
+        content = content.trim(); //Elimina espacos en blanco
+
+        // CASO 1: referencia directa +A1 -> copia valor
+        if (content.startsWith("+")) {
+            String ref = content.substring(1).trim();
+            return getCell(ref); //Simplemente una recursion para obtener el valor de referencia
         }
-        else if (content.startsWith("@")) {
-            String operation = content.substring(1, 4);
-            List<String> adjacents = MainGraph.getAllCellLinks(location);   // se obtienen todas las celdas a las que refiere
-            switch (operation){
-                case "max" :
-                    content = maxOperation(location, adjacents);
-                    break;
-                case "min" :
-                    content = minOperation(location, adjacents);
-                    break;
-                case "avg" :
-                    content = avgOperation(location, adjacents);
-                    break;
-                case "sum" :
-                    content = sumOperation(location, adjacents);
-                    break;
+
+        // CASO 2: Expresion matematca
+        if (isOperation(content)) {
+            try {
+                double result = interpreter(location);//Se llama al interpreter
+                
+                //Elimina los "." y devuelve el contenido como string
+                if (result == (long) result) { //
+                    return Long.toString((long) result);
+                } else {
+                    return Double.toString(result);
+                }
+
+            } catch (IOException e) {
+                return "ERROR"; //Si se cambia el contenido de una celda que aparecia en la operacion
+                //con un valor no permitido como una palabra devuelve Error
             }
         }
 
+        // CASO 3: Aca es simplemente si el contenido es un numero o palabra;
         return content;
     }
+    
+    
+    
+    public double interpreter(String location) throws IOException {
+        String expression = getValue(location);
 
-    private String maxOperation (String location, List<String> adjacents) { // SI NO NUMEROS, 0
-        List<Double> values = getAdjacentValues(adjacents);
-        String result = "0";
-        double max;
-        if(!values.isEmpty()){
-            max = values.getFirst();
-            for(double num : values){
-                if(num > max) max = num;
-            }
-            result = String.valueOf(max);
-        }
-        return result;
-    }
-    private String minOperation (String location, List<String> adjacents) { // SI NO NUMEROS, 0
-        List<Double> values = getAdjacentValues(adjacents);
-        String result = "0";
-        double min;
-        if(!values.isEmpty()){
-            min = values.getFirst();
-            for(double num : values){
-                if(num < min) min = num;
-            }
-            result = String.valueOf(min);
-        }
-        return result;
-    }
-    private String avgOperation (String location, List<String> adjacents) { // SI NO NUMEROS, ERROR
-        List<Double> values = getAdjacentValues(adjacents);
-        String result = "ERROR";
-        if(!values.isEmpty()){
-            double number = values.size();
-            double sum = 0;
-            for(double num : values){
-                sum += num;
-            }
-            result = String.valueOf(sum / number);
-        }
-        return result;
-    }
-    private String sumOperation (String location, List<String> adjacents) {
-        List<Double> values = getAdjacentValues(adjacents);
-        String result = "0";
-        double sum = 0;
-        if(!values.isEmpty()){
-            for(double num : values){
-                sum += num;
-            }
-            result = String.valueOf(sum);
-        }
-        return result;
+        StreamTokenizer st = new StreamTokenizer(
+                new BufferedReader(new StringReader(expression))
+        );
+
+        st.resetSyntax();
+        st.parseNumbers();
+        st.wordChars('A','Z');
+        st.wordChars('a','z');
+        st.whitespaceChars(' ',' ');
+        st.whitespaceChars('\t','\t');
+
+        st.ordinaryChar('+');
+        st.ordinaryChar('-');
+        st.ordinaryChar('*');
+        st.ordinaryChar('/');
+        st.ordinaryChar('(');
+        st.ordinaryChar(')');
+        st.ordinaryChar('@');
+        st.ordinaryChar('.');
+
+        return expression(st);
     }
     
-    private List<Double> getAdjacentValues(List<String> adjacents){
-        // Retorna lista con los contenidos de las celdas de adjacents que son numeros.
-        // Si no se reconoce ninguno como numero, entonces la lista estara vacia.
-        List<Double> values = new ArrayList<>(adjacents.size());
-        for(String cell : adjacents){
-            double value = 0;
-            try {
-                value = Double.parseDouble(getCell(cell));
-                values.add(value);
-            } catch (NumberFormatException _){}
+    private double expression(StreamTokenizer st) throws IOException {
+        double t = term(st); 
+
+        while (true) {
+            st.nextToken();
+
+            switch (st.ttype) {
+                case '+':
+                    t += term(st);
+                    break;
+                case '-':
+                    t -= term(st);
+                    break;
+                default:
+                    st.pushBack();
+                    return t;
+            }
         }
-        return values;
+    }
+
+    private double term(StreamTokenizer st) throws IOException {
+        double f = factor(st);
+
+        while (true) {
+            st.nextToken();
+
+            switch (st.ttype) {
+                case '*':
+                    f *= factor(st);
+                    break;
+                case '/':
+                    f /= factor(st);
+                    break;
+                default:
+                    st.pushBack();
+                    return f;
+            }
+        }
+    }
+
+    private double factor(StreamTokenizer st) throws IOException {
+        double sign = 1.0;
+        double val;
+
+        st.nextToken();
+
+        while (st.ttype == '+' || st.ttype == '-') {
+            if (st.ttype == '-') sign *= -1;
+            st.nextToken();
+        }
+
+        if (st.ttype == StreamTokenizer.TT_NUMBER) {
+            val = st.nval;
+        } else if (st.ttype == StreamTokenizer.TT_WORD) {
+            // puede ser referencia a una celda
+            String tok = st.sval;
+            if (tok.matches("[A-H][1-9][0-9]?")) { //Valida la celda
+                String raw = getCell(tok);  // evaluea la celda
+                if (raw.isBlank()) {
+                    val = 0.0;
+                } else {
+                    try {
+                        val = Double.parseDouble(raw);
+                    } catch (NumberFormatException e) {
+                        throw new IOException("Celda " + tok + "no contiene un numero");
+                    }
+                }
+            } else {
+                throw new IOException("Token no valido " + tok);
+            }
+        } else if (st.ttype == '(') {
+            // subexpresion entre parentesis
+            val = expression(st);
+            st.nextToken();
+            if (st.ttype != ')') {
+                throw new IOException("Falta )");
+            }
+        } else if (st.ttype == '@') {
+            // operacion @sum|@avg|@min|@max
+            val = parseFunction(st);
+        } else {
+            throw new IOException("Token inesperado");
+        }
+
+        return sign * val;
     }
     
-    public String getValue(String location){
-        return MainGraph.getCellContent(location);
+    private double parseFunction(StreamTokenizer st) throws IOException {
+        // st está después de '@'
+        st.nextToken();
+        if (st.ttype != StreamTokenizer.TT_WORD) {
+            throw new IOException("Nombre de operacion invlido");
+        }
+
+        String func = st.sval;//Lee sum|avg|max|min
+
+        st.nextToken();
+        if (st.ttype != '(') {
+            throw new IOException("Falta ( en operacion @");
+        }
+
+        // lee el primer extremo del rango: A1
+        st.nextToken();
+        if (st.ttype != StreamTokenizer.TT_WORD ||
+            !st.sval.matches("[A-H][1-9][0-9]?")) {
+            throw new IOException("Rango invalido");
+        }
+        String from = st.sval;
+
+        // lee los dos puntos ".."
+        st.nextToken();
+        if (st.ttype != '.') throw new IOException("Falta '.' en operacion");
+        st.nextToken();
+        if (st.ttype != '.') throw new IOException("Falta '.' en operacion");
+
+        // leer segundo extremo: B2
+        st.nextToken();
+        if (st.ttype != StreamTokenizer.TT_WORD ||
+            !st.sval.matches("[A-H][1-9][0-9]?")) {
+            throw new IOException("Rango invalido");
+        }
+        String to = st.sval;
+
+        // lee ')'
+        st.nextToken();
+        if (st.ttype != ')') {
+            throw new IOException("Falta ) en operacion");
+        }
+
+        // obtener todos los valores numericos del bloque
+        List<Double> values = getRangeValues(from, to);
+        
+        //Reglas si todos los bloques no tienen valor
+        if (values.isEmpty()) {
+            // sum|min|max devuelven 0, avg devuelve ERROR
+            if (func.equals("avg")) {
+                throw new IOException("Sin valores validos para avg");
+            }
+            return 0.0;
+        }
+
+        double result;
+        //switch sencillo para calcular la operacion
+        switch (func) {
+            case "sum":
+                result = 0.0;
+                for (double d : values) result += d;
+                return result;
+            case "avg":
+                result = 0.0;
+                for (double d : values) result += d;
+                return result / values.size();
+            case "min":
+                result = values.getFirst();
+                for (double d : values)
+                    if (d < result) result = d;
+                return result;
+            case "max":
+                result = values.getFirst();
+                for (double d : values)
+                    if (d > result) result = d;
+                return result;
+            default:
+                throw new IOException("Funcion @ no implementada");
+        }
     }
-}
+
+
+    private List<Double> getRangeValues(String from, String to) throws IOException {
+        List<Double> vals = new ArrayList<>();
+
+        int colFrom = COLUMNS.indexOf(from.substring(0, 1));
+        int rowFrom = Integer.parseInt(from.substring(1));
+
+        int colTo = COLUMNS.indexOf(to.substring(0, 1));
+        int rowTo = Integer.parseInt(to.substring(1));
+
+        int minCol = Math.min(colFrom, colTo);
+        int maxCol = Math.max(colFrom, colTo);
+        int minRow = Math.min(rowFrom, rowTo);
+        int maxRow = Math.max(rowFrom, rowTo);
+
+        for (int c = minCol; c <= maxCol; c++) {
+            for (int r = minRow; r <= maxRow; r++) {
+                String key = COLUMNS.get(c) + r;
+                String raw = getCell(key);
+                if (raw == null || raw.isBlank()) continue;
+                try {
+                    double d = Double.parseDouble(raw);
+                    vals.add(d);
+                } catch (NumberFormatException e) {}
+            }
+        }
+
+        return vals;
+    }
+    
+} 
+    
+ 
