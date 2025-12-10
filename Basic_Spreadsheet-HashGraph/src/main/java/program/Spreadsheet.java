@@ -95,7 +95,7 @@ public class Spreadsheet {
             
             MainGraph.setCellContent(location, content);
         } else {
-            MainGraph.setCellContent(location, "ERROR"); // operación inválida
+            MainGraph.setCellContent(location, "ERROR"); // operación invalida
         }
     }
 
@@ -285,6 +285,7 @@ public class Spreadsheet {
         return MainGraph.getCellContent(location); //Regresa el contenido de la celda;
     }    
 
+    
     public String getCell(String location) {//Metodo para obtener valor de la celda;
         String content = Circuits.contains(location) ? "AUTOREF" : MainGraph.getCellContent(location);
         content = content.trim(); //Elimina espacos en blanco
@@ -319,7 +320,7 @@ public class Spreadsheet {
     
     
     
-    public double interpreter(String location) throws IOException {
+    private double interpreter(String location) throws IOException {
         String expression = getValue(location);
 
         StreamTokenizer st = new StreamTokenizer(
