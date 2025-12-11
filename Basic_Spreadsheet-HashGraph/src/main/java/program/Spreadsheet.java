@@ -353,15 +353,12 @@ public class Spreadsheet {
             st.nextToken();
 
             switch (st.ttype) {
-                case '+':
-                    t += term(st);
-                    break;
-                case '-':
-                    t -= term(st);
-                    break;
-                default:
+                case '+' -> t += term(st);
+                case '-' -> t -= term(st);
+                default -> {
                     st.pushBack();
                     return t;
+                }
             }
         }
     }
@@ -373,15 +370,12 @@ public class Spreadsheet {
             st.nextToken();
 
             switch (st.ttype) {
-                case '*':
-                    f *= factor(st);
-                    break;
-                case '/':
-                    f /= factor(st);
-                    break;
-                default:
+                case '*' -> f *= factor(st);
+                case '/' -> f /= factor(st);
+                default -> {
                     st.pushBack();
                     return f;
+                }
             }
         }
     }
@@ -397,37 +391,37 @@ public class Spreadsheet {
             st.nextToken();
         }
 
-        if (st.ttype == StreamTokenizer.TT_NUMBER) {
-            val = st.nval;
-        } else if (st.ttype == StreamTokenizer.TT_WORD) {
-            // puede ser referencia a una celda
-            String tok = st.sval;
-            if (tok.matches("[A-H][1-9][0-9]?")) { //Valida la celda
-                String raw = getCell(tok);  // evaluea la celda
-                if (raw.isBlank()) {
-                    val = 0.0;
-                } else {
-                    try {
-                        val = Double.parseDouble(raw);
-                    } catch (NumberFormatException e) {
-                        throw new IOException("Celda " + tok + "no contiene un numero");
+        switch (st.ttype) {
+            case StreamTokenizer.TT_NUMBER -> val = st.nval;
+            case StreamTokenizer.TT_WORD -> {
+                // puede ser referencia a una celda
+                String tok = st.sval;
+                if (tok.matches("[A-H][1-9][0-9]?")) { //Valida la celda
+                    String raw = getCell(tok);  // evaluea la celda
+                    if (raw.isBlank()) {
+                        val = 0.0;
+                    } else {
+                        try {
+                            val = Double.parseDouble(raw);
+                        } catch (NumberFormatException e) {
+                            throw new IOException("Celda " + tok + "no contiene un numero");
+                        }
                     }
+                } else {
+                    throw new IOException("Token no valido " + tok);
                 }
-            } else {
-                throw new IOException("Token no valido " + tok);
             }
-        } else if (st.ttype == '(') {
-            // subexpresion entre parentesis
-            val = expression(st);
-            st.nextToken();
-            if (st.ttype != ')') {
-                throw new IOException("Falta )");
+            case '(' -> {
+                // subexpresion entre parentesis
+                val = expression(st);
+                st.nextToken();
+                if (st.ttype != ')') {
+                    throw new IOException("Falta )");
+                }
             }
-        } else if (st.ttype == '@') {
-            // operacion @sum|@avg|@min|@max
-            val = parseFunction(st);
-        } else {
-            throw new IOException("Token inesperado");
+            case '@' -> // operacion @sum|@avg|@min|@max
+                val = parseFunction(st);
+            default -> throw new IOException("Token inesperado");
         }
 
         return sign * val;
@@ -437,7 +431,8 @@ public class Spreadsheet {
         // st está después de '@'
         st.nextToken();
         if (st.ttype != StreamTokenizer.TT_WORD) {
-            throw new IOException("Nombre de operacion invlido");
+            if(!(st.sval.equals("sum") || st.sval.equals("avg") || st.sval.equals("max") || st.sval.equals("min")) )
+                throw new IOException("Nombre de operacion invlido");
         }
 
         String func = st.sval;//Lee sum|avg|max|min
@@ -488,26 +483,29 @@ public class Spreadsheet {
         //switch sencillo para calcular la operacion
         //Debo volver a verificar las celdas en la operaciones #SOLU
         switch (func) {
-            case "sum":
+            case "sum" -> {
                 result = 0.0;
                 for (double d : values) result += d;
                 return result;
-            case "avg":
+            }
+            case "avg" -> {
                 result = 0.0;
                 for (double d : values) result += d;
                 return result / values.size();
-            case "min":
+            }
+            case "min" -> {
                 result = values.getFirst();
                 for (double d : values)
                     if (d < result) result = d;
                 return result;
-            case "max":
+            }
+            case "max" -> {
                 result = values.getFirst(); //
                 for (double d : values)
                     if (d > result) result = d;
                 return result;
-            default:
-                throw new IOException("Funcion @ no implementada");
+            }
+            default -> throw new IOException("Funcion @ no implementada");
         }
     }
 

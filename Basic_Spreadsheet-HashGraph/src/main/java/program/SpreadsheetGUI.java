@@ -138,6 +138,7 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
         spreadsheet = new Spreadsheet();
         refreshTable();
     }
+    
     private void commandFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandFieldActionPerformed
         String text = commandField.getText();
         String[] texts = ProccesText(text);
@@ -157,10 +158,22 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
 
         commandField.setText("");
         refreshTable();
-
-        
     }//GEN-LAST:event_commandFieldActionPerformed
-
+    
+    private String[] ProccesText(String text){
+        String[] texts = text.split(" ",2);
+        return texts;
+    }
+    
+    private void refreshTable(){
+        for(int i=0 ; i < excel.getRowCount(); i++){
+            for(int j = 0; j< excel.getColumnCount(); j++){
+                String location = toLocation(i,j);
+                String value = spreadsheet.getCell(location);
+                excel.setValueAt(value,i,j);
+            }
+        }
+    }
     private void excelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_excelMouseClicked
         int rowIndex = excel.rowAtPoint(evt.getPoint());
         int columnIndex = excel.columnAtPoint(evt.getPoint());
@@ -204,21 +217,6 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
         String column = excel.getColumnName(columnIndex);
         int rowNumber = row + 1;
         return column + rowNumber;
-    }
-    
-    private void refreshTable(){
-        for(int i=0 ; i < excel.getRowCount(); i++){
-            for(int j = 0; j< excel.getColumnCount(); j++){
-                String location = toLocation(i,j);
-                String value = spreadsheet.getCell(location);
-                excel.setValueAt(value,i,j);
-            }
-        }
-    }
-    
-    private String[] ProccesText(String text){
-        String[] texts = text.split(" ",2);
-        return texts;
     }
     
     
