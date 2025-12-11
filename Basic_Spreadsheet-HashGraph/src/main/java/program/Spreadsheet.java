@@ -79,7 +79,7 @@ public class Spreadsheet {
             refreshCircuitsFor(location);
             MainGraph.setCellContent(location, content); // guarda el contenido tal cual "+B2"
         } else {
-            MainGraph.setCellContent(location, "ERROR"); // referencia invalida
+            MainGraph.setCellContent(location, content); // referencia invalida
         }
     }
 
@@ -95,7 +95,7 @@ public class Spreadsheet {
             
             MainGraph.setCellContent(location, content);
         } else {
-            MainGraph.setCellContent(location, "ERROR"); // operación invalida
+            MainGraph.setCellContent(location, content); // operación invalida
         }
     }
 
