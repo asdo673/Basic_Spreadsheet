@@ -4,44 +4,233 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec012357-bde5-4e67-857a-e0b0a774d517" name="Changes" comment="" />
+    <list default="true" id="577a4d37-23cc-4cb9-9368-8a09ad905378" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/cc232aproject/App.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/circlelinkedlist/CircleLinkedList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/circlelinkedlist/CircleLinkedListMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/circlelinkedlist/Josephus/JosephusMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/doublelinkedlist/DNodo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/doublelinkedlist/DoubleLinkedList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/doublelinkedlist/DoubleLinkedListMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/simplelinkedlist/Nodo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/simplelinkedlist/SimpleLinkedList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/simplelinkedlist/SimpleLinkedListMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/simplelinkedlist/bicicleta/ONodo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/simplelinkedlist/bicicleta/OSimpleLinkedList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/linkedlist/simplelinkedlist/bicicleta/OSimpleLinkedListMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/maxmin/MaxMin.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/maxmin/MaxMinMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/maxmin/MaxMinObject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/maxmin/MaxMinObjectMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/model/Bicicleta.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/model/Persona.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/model/Producto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/pc1/MarketplaceMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/pc1/Venta.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/pruebaentrada/Agenda.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/pruebaentrada/AgendaMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/pruebaentrada/Persona.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/search/Search.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/search/SearchMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/search/SearchObject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/sort/Sort.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/sort/SortMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/sort/SortObject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/AnalizadorSintactico/AnalizadorException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/AnalizadorSintactico/AnalizadorSintactico.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/AnalizadorSintactico/AnalizadorSintacticoMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/AnalizadorSintactico/LexicoException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/AnalizadorSintactico/SintaxisException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/AnalizadorSintactico/Token.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/Casillero1.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/Casillero2.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/Casillero4.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/ContenedorMagico.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/EditorTexto/TexEditorMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/EditorTexto/TextEditor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/EditorTexto/TextEditorLinkedListTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/MaletaMagica.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/arraylistTDA/ArrayListTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/arraylistTDA/ArrayListTDAMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/arraylistTDA/Iterador.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/circlelinkedlistTDA/CircleLinkedListTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/circlelinkedlistTDA/DNodo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/circlelinkedlistTDA/Iterador.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/circlelinkedlistTDA/Servidores/RedServidoresMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/graphTDA/DataGraph.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/graphTDA/Edge.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/graphTDA/Graph.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/graphTDA/GraphMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/graphTDA/Vertex.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/graphTDA/recubrimiento/Kruskal.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/graphTDA/shortestpath/CostPathPair.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/graphTDA/shortestpath/CostVertexPair.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/graphTDA/shortestpath/Dijkstra.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/linkedlistTDA/Iterador.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/linkedlistTDA/LinkedListTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/linkedlistTDA/LinkedListTDAMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/linkedlistTDA/Nodo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/linkedlistTDA/contrasenia/ValidadorContrasenia.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/linkedlistTDA/contrasenia/ValidadorContraseniaMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/IteratorTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/ListTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/NoSuchElementException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/fortunecookie/fin/FortuneCookieFile.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/fortunecookie/fin/FortuneCookieMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/fortunecookie/fin/FortuneCookieManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/fortunecookie/fin/fortunes.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/fortunecookie/ini/FortuneCookieFile.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/fortunecookie/ini/FortuneCookieMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/fortunecookie/ini/FortuneCookieManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/listTDA/fortunecookie/ini/fortunes.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/ArrayQueueTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/ArrayQueueTDAMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/LinkedQueueTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/LinkedQueueTDAMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/PriorityQueueTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/QueueEmptyExceptionTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/QueueTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/QueueTDAMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/hospital/Estadisticas.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/hospital/Paciente.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/hospital/SimuladorHospital.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/hospital/SimuladorHospitalMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/simulador/Estadistica.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/simulador/Simulador.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/simulador/SimuladorMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/queueTDA/simulador/Trabajo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/ArrayStackTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/LinkedStackTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/ListStackTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/StackEmptyExceptionTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/StackTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/StackTDAMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/laberinto/CeldaDelLaberinto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/laberinto/Laberinto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/laberinto/LaberintoMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/recolector/Posicion.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/recolector/Recolector.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/recolector/RecolectorMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/tagsHTML/HTMLEtiq.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/tagsHTML/HTMLRecuperaEtiq.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/tagsHTML/HTMLRevisaEtiq.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/tagsHTML/TagsHTMLMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/tagsHTML/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/stackTDA/tagsHTML/index_1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/tdaMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/AVL/AvlTree.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/AVL/AvlTreeMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/AVL/AvlTreeNode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/BstNodeTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/BstTDA.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/BstTDAMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/SoftwareStore/Software.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/SoftwareStore/SoftwareStore.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/SoftwareStore/SoftwareStoreMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/SoftwareStore/software.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/SoftwareStore/software1.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/TBT/TBT.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/TBT/TBTMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/TBT/TBTNode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/java/uni/aed/tda/treeTDA/vocabulario/Latin.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/resources/fortunes.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/src/main/resources/words.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/252CC232AProject-master/testfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/Basic_Spreadsheet.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/ideas.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/src/main/java/graph/GraphPaths.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/src/main/java/graph/HashGraph.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/src/main/java/graph/SpreadsheetGraph.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/src/main/java/graph/Vertex.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/src/main/java/program/COLUMN.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/src/main/java/program/Spreadsheet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/src/main/java/program/SpreadsheetGUI.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/src/main/java/program/SpreadsheetGUI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/graph/GraphPaths$NODE.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/graph/GraphPaths$PATH.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/graph/GraphPaths.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/graph/HashGraph$1vertex.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/graph/HashGraph.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/graph/SpreadsheetGraph.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/graph/Vertex.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/program/COLUMN.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/program/Spreadsheet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/program/SpreadsheetGUI$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/program/SpreadsheetGUI$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/program/SpreadsheetGUI$3.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/classes/program/SpreadsheetGUI.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Basic_Spreadsheet-HashGraph/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="main" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
-  <component name="ProjectId" id="36inP7ADWCqenbFEeCsAarEe1RY" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="36j3Vx6DV0YkRiuktffrsUHl5lL" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.SpreadsheetGUI.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "papu",
-    "last_opened_file_path": "D:/carpetitas/projects/AlgoritmosUni/trabajo-dhemiz/Basic_Spreadsheet"
+    "last_opened_file_path": "D:/carpetitas/projects/AlgoritmosUni/trabajo-final/Basic_Spreadsheet",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Basic_Spreadsheet" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Basic_Spreadsheet" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="ec012357-bde5-4e67-857a-e0b0a774d517" name="Changes" comment="" />
-      <created>1765498232174</created>
+      <changelist id="577a4d37-23cc-4cb9-9368-8a09ad905378" name="Changes" comment="" />
+      <created>1765506180900</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1765498232174</updated>
+      <updated>1765506180900</updated>
     </task>
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
   </component>
 </project>

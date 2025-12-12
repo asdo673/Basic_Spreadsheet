@@ -1,7 +1,0 @@
-AdobePhotoshop 7.0 7 580
-Linux 25.0 50 100
-NortonSystemWorks 2003 6 50
-NortonUtilities 1.0 10 30
-VisualJ++Professional 6.0 19 100
-VisualJ++Standard 6.0 22 40
-Windows 11.0 15 350
