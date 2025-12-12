@@ -59,8 +59,10 @@ public class HashGraph<K, T extends Comparable<T> > {
         Vertices.get(key).clear();
         Vertices.get(key).setValue(value);
     }
-    
-  public List<K> getPath(K start, K end){
+
+    // Retorna una secuencia de llaves de vertices que representa un camino entre vertice start y vertice end.
+    // En caso no se pueda determinar un camino, retorna null.
+    public List<K> getPath(K start, K end){
         // Clase local para instanciar vertices con un campo que especifique si fueron visitados.
         // Hace falta usar el metodo setAdjacents para obtener los adyacentes.
         class vertex{
@@ -91,24 +93,24 @@ public class HashGraph<K, T extends Comparable<T> > {
         Stack<vertex> path = new Stack<>();     // Stack para obtener el camino
 
         // Se obtiene el camino (si existe) por medio de backtracking.
-        vertex trav = new vertex(start);
+        vertex trav = new vertex(start);    // variable para traversar
         do {
             boolean allvisited = true;
             if(trav.adjacents == null) trav.setAdjacents(path, end); // lista puede tener vertices o estar vacia (imposible null)
             for(vertex v : trav.adjacents){
-                if(!v.visited){
-                    path.push(trav);
-                    trav = v;
+                if(!v.visited){     // si v no ha sido visitado, se avanza por alli
+                    path.push(trav);    // se registra vertice actual
+                    trav = v;           // se avanza
                     allvisited = false;
                     break;
                 }
             }
-            if(allvisited){
-                if(path.isEmpty()) break;
-                trav.visited = true;
-                trav = path.pop();
+            if(allvisited){     // si no se encontraron vertices adyacentes no visitados, se retrocede o se termina busqueda
+                if(path.isEmpty()) break;   // si path esta vacia, no se puede retroceder y se termina busqueda
+                trav.visited = true;    // se marca vertice actual como visitado
+                trav = path.pop();      // se retrocede al vertice anterior
             }
-        } while (!trav.node.equals(end));
+        } while (!trav.node.equals(end));   // si trav llego al vertice end, se encontro el camino y se termina la busqeuda
 
         // Si existe el camino, se guarda en finalPath
         if(!path.isEmpty()){
@@ -122,6 +124,4 @@ public class HashGraph<K, T extends Comparable<T> > {
 
         return finalPath;
     }
-
-
 }

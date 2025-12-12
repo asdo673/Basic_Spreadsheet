@@ -161,7 +161,7 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_commandFieldActionPerformed
     
     private String[] ProccesText(String text){
-        String[] texts = text.split(" ",2);
+        String[] texts = text.trim().split(" ",2);
         return texts;
     }
     

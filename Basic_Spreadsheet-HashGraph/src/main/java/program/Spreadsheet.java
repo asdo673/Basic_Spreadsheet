@@ -19,8 +19,7 @@ public class Spreadsheet {
     private static final int rowsNumber = 20;   // Numero de filas
     private static final int columnsNumber = 8;    // Numero de columnas
     private final SpreadsheetGraph MainGraph;     // Grafo que conforma la estructura del spreadsheet
-    private StreamTokenizer fIn;
-    private final GraphPaths<String, String> Circuits; 
+    private final GraphPaths<String, String> Circuits;
     static {
         // inicializacion de lista de columnas
         COLUMNS = new ArrayList<>(COLUMN.values().length);
@@ -67,7 +66,7 @@ public class Spreadsheet {
         }
 
         // 5. Caso 3: valor normal puede ser palabra o numero
-        refreshCircuitsFor(location);
+        Circuits.refreshCircuitsAndCheckFor(location);    // limpia y recalcula
         MainGraph.setCellContent(location, content);
     }
 
@@ -76,7 +75,7 @@ public class Spreadsheet {
             String ref = content.substring(1).trim(); // celda de referencia sin el '+'
             MainGraph.setCellLink(location, ref);     // enlace de referencia
 
-            refreshCircuitsFor(location);
+            Circuits.refreshCircuitsAndCheckFor(location);    // limpia y recalcula
             MainGraph.setCellContent(location, content); // guarda el contenido tal cual "+B2"
         } else {
             MainGraph.setCellContent(location, content); // referencia invalida
@@ -86,12 +85,12 @@ public class Spreadsheet {
     private void handleOperation(String location, String content) {
         if (validarOperacion(content)) {
             // Enlaces a celdas individuales
-            crearLinksDesdeExpresion(location, content);
+            createLinksFromExpression(location, content);
 
             // Enlaces a bloques
-            crearLinksDesdeBloques(location, content);
+            createLinksFromBlock(location, content);
 
-            refreshCircuitsFor(location);
+            Circuits.refreshCircuitsAndCheckFor(location);    // limpia y recalcula
             
             MainGraph.setCellContent(location, content);
         } else {
@@ -99,15 +98,6 @@ public class Spreadsheet {
         }
     }
 
-    private void refreshCircuitsFor(String location) {
-        Circuits.refreshPathsAndFindCircuits();              // limpia y recalcula
-        List<String> circuit = MainGraph.getPath(location, location); // ciclo desde la propia celda
-        if (circuit != null && !Circuits.contains(circuit)) {
-            Circuits.add(circuit);
-        }
-    }
-
-    
     private boolean isReference(String s) {
         return s.matches("\\+([A-H][0-9]|[A-H]20|[A-H][1][0-9])");// Comprueba si contiene el patron \\+(signo literal),[A-H]Letra entre A-H,[1-9] numero entre 1-9,[0-9]? numero opcional entre 0 y 9 puesto que las filas son del 1 al 20
     } 
@@ -130,7 +120,7 @@ public class Spreadsheet {
             st.wordChars('0','9');//Permite que palabras contengan numeros
             st.whitespaceChars(' ', ' ');//Elimina todo los espacios en blanco;
 
-//Convierte a todo estos simbolos en elementos unicos//
+            //Convierte a todo estos simbolos en elementos unicos//
             st.ordinaryChar('+');
             st.ordinaryChar('-');
             st.ordinaryChar('*');
@@ -233,7 +223,7 @@ public class Spreadsheet {
         throw new IOException("Factor invalido"); //Si es una palabra o otro termino incorrecto
     }
 
-    private void crearLinksDesdeExpresion(String location, String expr) {
+    private void createLinksFromExpression(String location, String expr) {
         Matcher m = Pattern.compile("[A-H][0-9]|[A-H]20|[A-H][1][0-9]").matcher(expr);//Crea un objeto matcher para utilizarlo
         //Una mejora puede ser que evite a las celdas dentro de una operacion #upgrade
         //sobre la expresion
@@ -243,7 +233,7 @@ public class Spreadsheet {
         }
     }
     
-    private void crearLinksDesdeBloques(String location, String expr) {
+    private void createLinksFromBlock(String location, String expr) {
         Pattern pattern = Pattern.compile(
             "@(sum|avg|min|max)\\(([A-H][0-9]|[A-H]20|[A-H][1][0-9])\\.\\.([A-H][0-9]|[A-H]20|[A-H][1][0-9])\\)"
         );
@@ -293,7 +283,8 @@ public class Spreadsheet {
         // CASO 1: referencia directa +A1 -> copia valor
         if (content.startsWith("+")) {
             String ref = content.substring(1).trim();
-            return getCell(ref); //Simplemente una recursion para obtener el valor de referencia
+            String value = getCell(ref);
+            return value.equals("AUTOREF") ? "0" : value; //Simplemente una recursion para obtener el valor de referencia
         }
 
         // CASO 2: Expresion matematca
