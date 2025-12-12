@@ -99,6 +99,7 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("CommandField");
 
+        viewCommand.setEditable(false);
         jScrollPane2.setViewportView(viewCommand);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -137,16 +138,42 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
         spreadsheet = new Spreadsheet();
         refreshTable();
     }
+    
     private void commandFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandFieldActionPerformed
-        // Bloque donde se ingresan los comandos
         String text = commandField.getText();
         String[] texts = ProccesText(text);
-        spreadsheet.setCell(texts[0],texts[1]);
+
+        if (texts.length > 0 && !texts[0].isEmpty()) {
+            String location = texts[0];
+            String content;
+
+            if (texts.length == 1) {
+                content = "";
+            } else {
+                content = texts[1];
+            }
+
+            spreadsheet.setCell(location, content);
+        }
+
         commandField.setText("");
         refreshTable();
-        
     }//GEN-LAST:event_commandFieldActionPerformed
-
+    
+    private String[] ProccesText(String text){
+        String[] texts = text.trim().split(" ",2);
+        return texts;
+    }
+    
+    private void refreshTable(){
+        for(int i=0 ; i < excel.getRowCount(); i++){
+            for(int j = 0; j< excel.getColumnCount(); j++){
+                String location = toLocation(i,j);
+                String value = spreadsheet.getCell(location);
+                excel.setValueAt(value,i,j);
+            }
+        }
+    }
     private void excelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_excelMouseClicked
         int rowIndex = excel.rowAtPoint(evt.getPoint());
         int columnIndex = excel.columnAtPoint(evt.getPoint());
@@ -157,7 +184,7 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
         String location = toLocation(rowIndex,columnIndex);
         String value = spreadsheet.getValue(location);
         
-        viewCommand.setText(value);
+        viewCommand.setText(value != null ? value : "");
         
     }//GEN-LAST:event_excelMouseClicked
 
@@ -190,21 +217,6 @@ public class SpreadsheetGUI extends javax.swing.JFrame {
         String column = excel.getColumnName(columnIndex);
         int rowNumber = row + 1;
         return column + rowNumber;
-    }
-    
-    private void refreshTable(){
-        for(int i=0 ; i < excel.getRowCount(); i++){
-            for(int j = 0; j< excel.getColumnCount(); j++){
-                String location = toLocation(i,j);
-                String value = spreadsheet.getCell(location);
-                excel.setValueAt(value,i,j);
-            }
-        }
-    }
-    
-    private String[] ProccesText(String text){
-        String[] texts = text.trim().split(" ",2);
-        return texts;
     }
     
     
