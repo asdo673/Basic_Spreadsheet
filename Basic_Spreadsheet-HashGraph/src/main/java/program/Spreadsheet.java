@@ -296,7 +296,7 @@ public class Spreadsheet {
                 if (result == (long) result) { //
                     return Long.toString((long) result);
                 } else {
-                    return Double.toString(result);
+                    return String.format("%.3f", result);
                 }
 
             } catch (IOException e) {
